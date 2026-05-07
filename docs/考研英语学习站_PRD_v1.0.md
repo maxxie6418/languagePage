@@ -1,6 +1,6 @@
 # 英语学习站 — 产品需求文档（PRD）
 
-> **版本**：v1.0  
+> **版本**：v1.1  
 > **日期**：2026-05-07  
 > **技术栈**：Node.js + Express + SQLite3 + 原生 HTML/CSS/JS（单页应用）  
 > **AI 服务**：DeepSeek API（后端代理）  
@@ -89,6 +89,7 @@
 | username | TEXT UNIQUE | 用户名 |
 | password_hash | TEXT | bcrypt 哈希 |
 | role | TEXT | `user` / `admin`，默认 `user` |
+| ebbinghaus_reminder_enabled | INTEGER | 艾宾浩斯提醒开关，0/1，默认 1（开启） |
 | created_at | DATETIME | 注册时间 |
 
 ### 4.2 单词表 `words`（公共只读）
@@ -106,12 +107,14 @@
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| id | INTEGER PK | |
+| id | INTEGER PK | 自增主键 |
 | user_id | INTEGER FK | 关联 users.id |
 | word_id | INTEGER FK | 关联 words.id |
 | status | TEXT | `unmastered`(未掌握) / `learning`(记忆中) / `mastered`(已掌握) |
 | mastered_at | DATETIME | 标记为已掌握的时间（艾宾浩斯起点） |
 | updated_at | DATETIME | 最后更新时间 |
+
+**约束**：UNIQUE(user_id, word_id)
 
 ### 4.4 知识点表 `knowledge_points`（公共只读）
 
@@ -127,17 +130,19 @@
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| id | INTEGER PK | |
+| id | INTEGER PK | 自增主键 |
 | user_id | INTEGER FK | |
 | knowledge_id | INTEGER FK | |
 | status | TEXT | `unmastered` / `mastered` |
 | mastered_at | DATETIME | 标记已掌握时间 |
 
-### 4.6 艾宾浩斯复习记录表 `ebinhause_records`（用户隔离）
+**约束**：UNIQUE(user_id, knowledge_id)
+
+### 4.6 艾宾浩斯复习记录表 `ebbinghaus_records`（用户隔离）
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| id | INTEGER PK | |
+| id | INTEGER PK | 自增主键 |
 | user_id | INTEGER FK | |
 | item_type | TEXT | `word` / `knowledge` |
 | item_id | INTEGER | 对应 word_id 或 knowledge_id |
@@ -145,6 +150,8 @@
 | scheduled_at | DATETIME | 计划复习日期 |
 | reviewed_at | DATETIME | 实际复习日期（NULL 表示未复习） |
 | status | TEXT | `pending`(待复习) / `done`(已复习) / `skipped`(跳过) |
+
+**约束**：UNIQUE(user_id, item_type, item_id, stage)
 
 ### 4.7 测验记录表 `quiz_records`（用户隔离）
 
@@ -163,12 +170,14 @@
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| id | INTEGER PK | |
+| id | INTEGER PK | 自增主键 |
 | user_id | INTEGER FK | |
-| question_id | INTEGER | 题目ID |
+| question_id | INTEGER | 关联 questions.id |
 | category | TEXT | 题型 |
 | wrong_count | INTEGER | 错误次数，默认 1 |
 | last_wrong_at | DATETIME | |
+
+**约束**：UNIQUE(user_id, question_id)
 
 ### 4.9 AI 配置表 `ai_configs`（全局单条，管理员维护）
 
@@ -180,6 +189,78 @@
 | base_url | TEXT | API 基础地址 |
 | model | TEXT | 默认模型，如 `deepseek-chat` |
 | is_enabled | INTEGER | 0/1，是否启用 AI |
+
+### 4.10 题库表 `questions`（公共只读）
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | INTEGER PK | 自增主键 |
+| category | TEXT | 题型分类：`完形填空/阅读理解/翻译/作文` |
+| source | TEXT | 来源年份/出处（可选） |
+| passage | TEXT | 文章正文（阅读理解/完形填空的文章内容，支持 Markdown） |
+| question_text | TEXT | 题目内容（不含选项） |
+| options | TEXT (JSON) | 选项列表 JSON，如 `["A. xxx","B. xxx","C. xxx","D. xxx"]`（翻译/作文题型可为 NULL） |
+| answer | TEXT | 标准答案（选择题为选项字母，翻译/作文为参考范文或要点） |
+| explanation | TEXT | 解析内容（支持 Markdown） |
+| keywords | TEXT | 重点词汇（JSON 数组，可选） |
+| difficulty | TEXT | 难度：`easy/medium/hard`，默认 `medium` |
+| order_index | INTEGER | 排序 |
+
+### 4.11 题集表 `question_sets`（公共只读）
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | INTEGER PK | 自增主键 |
+| name | TEXT | 题集名称，如 `2024 阅读真题` |
+| type | TEXT | `quick`(快速测验) / `full`(全真模拟) |
+| category | TEXT | 题型分类（全真模拟时为 NULL） |
+| time_limit | INTEGER | 答题时限（分钟），全真模拟专用 |
+| description | TEXT | 题集描述 |
+
+### 4.12 题集题目关联表 `question_set_items`（公共只读）
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | INTEGER PK | 自增主键 |
+| set_id | INTEGER FK | 关联 question_sets.id |
+| question_id | INTEGER FK | 关联 questions.id |
+| order_index | INTEGER | 题号排序 |
+
+**约束**：UNIQUE(set_id, question_id)
+
+### 4.13 用户单词清单表 `user_word_lists`（用户隔离）
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | INTEGER PK | 自增主键 |
+| user_id | INTEGER FK | |
+| name | TEXT | 清单名称，如 `高频易错词` |
+| description | TEXT | 清单描述（可选） |
+| created_at | DATETIME | 创建时间 |
+
+### 4.14 用户单词清单条目表 `user_word_list_items`（用户隔离）
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | INTEGER PK | 自增主键 |
+| list_id | INTEGER FK | 关联 user_word_lists.id |
+| word_id | INTEGER FK | 关联 words.id |
+| added_at | DATETIME | 添加时间 |
+| note | TEXT | 备注（可选） |
+
+**约束**：UNIQUE(list_id, word_id)
+
+### 4.15 用户单词标记表 `user_word_flags`（用户隔离）
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | INTEGER PK | 自增主键 |
+| user_id | INTEGER FK | |
+| word_id | INTEGER FK | 关联 words.id |
+| flag_type | TEXT | `important`(重点) / `difficult`(难点) / `favorite`(收藏) |
+| created_at | DATETIME | 标记时间 |
+
+**约束**：UNIQUE(user_id, word_id, flag_type)
 
 ---
 
@@ -202,7 +283,11 @@
 | GET | `/api/words/:id` | 单个单词详情 |
 | POST | `/api/user/words/status` | 更新用户单词掌握状态（含 mastered_at 时间戳） |
 | GET | `/api/user/words` | 获取当前用户所有单词掌握状态 |
-| POST | `/api/words/import` | **管理员**导入 MD 格式单词（后端解析入库） |
+| GET | `/api/user/words/lists` | 获取用户单词清单列表 |
+| POST | `/api/user/words/lists` | 创建单词清单 |
+| POST | `/api/user/words/lists/:id/items` | 向清单添加单词 |
+| DELETE | `/api/user/words/lists/:id/items/:wordId` | 从清单移除单词 |
+| POST | `/api/user/words/flags` | 标记/取消标记单词（important/difficult/favorite） |
 
 ### 5.3 知识点相关
 
@@ -212,29 +297,30 @@
 | GET | `/api/knowledge/:id` | 知识点详情 |
 | POST | `/api/user/knowledge/status` | 更新知识点掌握状态 |
 | GET | `/api/user/knowledge` | 获取当前用户知识点掌握状态 |
-| POST | `/api/knowledge/import` | **管理员**导入 MD 知识点 |
 
 ### 5.4 艾宾浩斯相关
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| GET | `/api/user/ebinhause/today` | 获取今日待复习列表（含单词和知识点） |
-| GET | `/api/user/ebinhause/calendar` | 获取复习日历（未来 N 天计划） |
-| POST | `/api/user/ebinhause/review` | 标记某项已复习（更新 stage + 生成下一周期记录） |
-| GET | `/api/user/ebinhause/settings` | 获取提醒开关状态 |
-| POST | `/api/user/ebinhause/settings` | 更新提醒开关 |
+| GET | `/api/user/ebbinghaus/today` | 获取今日待复习列表（含单词和知识点） |
+| GET | `/api/user/ebbinghaus/calendar` | 获取复习日历（未来 N 天计划） |
+| POST | `/api/user/ebbinghaus/review` | 标记某项已复习（更新 status + 推进 stage） |
+| GET | `/api/user/ebbinghaus/settings` | 获取提醒开关状态 |
+| POST | `/api/user/ebbinghaus/settings` | 更新提醒开关 |
 
-**艾宾浩斯复习逻辑**：
-- 当用户将单词/知识点标记为 `mastered` 时，后端自动在 `ebinhause_records` 插入 6 条记录，stage 1~6，scheduled_at 分别 = mastered_at + 1/2/4/7/15/30 天
+**艾宾浩斯复习逻辑**（预生成策略）：
+- 当用户将单词/知识点标记为 `mastered` 时，后端自动在 `ebbinghaus_records` 一次性插入 6 条记录，stage 1~6，scheduled_at 分别 = mastered_at + 1/2/4/7/15/30 天，status = `pending`
 - 用户调用 `/review` 时：
-  - 若点击"已复习"：标记当前 stage 为 `done`，并生成下一 stage 记录（如果还有）
-  - 若点击"未掌握"：将对应 word/knowledge 状态改回 `unmastered`，清除后续未执行的复习计划
+  - 若点击"已掌握"：将当前 stage 标记为 `done`（此时下一条 stage 的记录已存在，无需新建）
+  - 若点击"未掌握"：将对应 word/knowledge 状态改回 `unmastered`，将该 item 所有 `pending` 状态的复习记录标记为 `skipped`，后续重新标记 mastered 时重新生成全部记录
 
 ### 5.5 测验相关
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| GET | `/api/quiz/questions` | 获取测验题目（按 category + limit 随机抽取） |
+| GET | `/api/quiz/questions` | 获取测验题目（按 category + limit 从 questions 表随机抽取） |
+| GET | `/api/quiz/sets` | 获取题集列表 |
+| GET | `/api/quiz/sets/:id/questions` | 获取指定题集的全部题目 |
 | POST | `/api/quiz/submit` | 提交答案，返回得分与解析 |
 | GET | `/api/user/quiz/history` | 测验历史 |
 | GET | `/api/user/mistakes` | 错题本 |
@@ -255,10 +341,13 @@
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| POST | `/api/admin/import/words` | 上传 MD 文件导入单词 |
-| POST | `/api/admin/import/knowledge` | 上传 MD 文件导入知识点 |
+| POST | `/api/admin/import/words` | **管理员**上传 MD 文件导入单词 |
+| POST | `/api/admin/import/knowledge` | **管理员**上传 MD 文件导入知识点 |
+| POST | `/api/admin/import/questions` | **管理员**上传 JSON/MD 文件导入题库 |
 | GET | `/api/user/export` | 导出当前用户全部数据为 JSON |
+| POST | `/api/user/import` | 导入用户个人数据（JSON，覆盖策略：已存在的记录跳过） |
 | GET | `/api/admin/export/all` | **管理员**导出全站数据备份 |
+| POST | `/api/admin/import/restore` | **管理员**恢复全站数据（上传备份 JSON，覆盖前校验格式） |
 
 ### 5.8 设置与管理
 
@@ -266,8 +355,15 @@
 |------|------|------|
 | GET | `/api/admin/users` | 用户列表（管理员） |
 | POST | `/api/admin/users/:id/reset-password` | 重置密码（管理员） |
+| DELETE | `/api/admin/users/:id` | 删除用户（管理员，不可删除自身及最后一个管理员） |
 | GET | `/api/admin/ai-config` | 获取 AI 配置 |
 | POST | `/api/admin/ai-config` | 更新 AI 配置 |
+
+**删除用户约束**：
+- 不允许管理员删除自身
+- 若目标用户是管理员，且系统中仅剩该一个管理员，则拒绝删除
+- 删除用户时，其所有学习数据（user_words、user_knowledge、ebbinghaus_records、quiz_records、mistakes、user_word_lists、user_word_flags）**级联删除**
+- 被删除的用户名不可复用（保留 users 记录但标记为 `deleted`，或彻底删除并释放用户名）
 
 ---
 
@@ -511,7 +607,22 @@
 - 内容底部：「标记为已掌握」按钮
 - 右上角：「使用语法拆解工具」按钮，点击后弹出输入框，输入长难句后调用 AI 解析并可视化展示结构
 
-#### 6.4.3 辅助工具区
+#### 6.4.3 作文素材与批改
+
+**作文素材区**：
+- 左侧分类列表（图表作文、议论文、应用文等）
+- 右侧范文/模板内容展示
+- 可标记已掌握
+
+**作文批改输入界面**：
+- 标题输入框（可选）
+- 正文输入区（多行文本框，带字数统计实时显示）
+- 字数限制提示（考研英语作文要求）
+- 「提交批改」按钮
+- 历史记录入口（查看过往批改记录）
+- 批改结果展示：评分（内容/结构/语言/字数四维评分）、修改建议、原文对比高亮
+
+#### 6.4.4 辅助工具区
 
 **语法拆解器**：
 - 输入框 + 「拆解」按钮
@@ -651,32 +762,79 @@ As is vividly shown in the chart...
 - 正文为 content
 - 支持批量上传，重复标题自动跳过
 
+### 7.3 题库导入格式规范（`questions.json`）
+
+```json
+[
+  {
+    "category": "阅读理解",
+    "passage": "文章正文内容...",
+    "question_text": "According to the passage, what is the main idea?",
+    "options": ["A. Option A", "B. Option B", "C. Option C", "D. Option D"],
+    "answer": "B",
+    "explanation": "解析内容...",
+    "keywords": ["keyword1", "keyword2"],
+    "difficulty": "medium"
+  }
+]
+```
+
+**字段说明**：
+- `category`：题型分类，支持 `完形填空/阅读理解/翻译/作文`
+- `passage`：文章正文（选择题型必填，翻译/作文可为空）
+- `options`：选项列表（翻译/作文题型可为 null）
+- `answer`：标准答案（选择题为选项字母，翻译/作文为参考范文或要点）
+- `explanation`：解析（支持 Markdown）
+- `keywords`：重点词汇数组（可选）
+- `difficulty`：难度 `easy/medium/hard`，默认 `medium`
+
+**MD 导入格式（`questions.md`）**：
+
+```markdown
+# 阅读理解
+
+## 题 1
+> 文章正文...
+
+**题目**：According to the passage, what is the main idea?
+A. Option A
+B. Option B
+C. Option C
+D. Option D
+
+**答案**：B
+**解析**：解析内容...
+**难度**：medium
+```
+
 ---
 
 ## 八、艾宾浩斯记忆法详细逻辑
 
-### 8.1 触发条件
+### 8.1 触发条件（预生成策略）
 用户将单词或知识点标记为 `mastered` 时，后端自动执行：
 
 ```
 for stage in [1, 2, 3, 4, 5, 6]:
     interval = [1, 2, 4, 7, 15, 30][stage-1]  # 天
     scheduled_at = now + interval days
-    插入 ebinhause_records:
+    插入 ebbinghaus_records:
         user_id, item_type, item_id, stage, scheduled_at, status='pending'
 ```
+
+一次性生成全部 6 条记录，后续复习流程仅更新 status，不再新增。
 
 ### 8.2 复习流程
 
 1. 用户首页看到「今日待复习」卡片
 2. 点击「复习」按钮 → 弹出对话框：
-   - **已掌握**：标记当前 stage 为 `done`，生成下一 stage 记录（若 stage < 6）
-   - **未掌握**：将对应 item 状态改回 `unmastered`，删除该 item 所有 `pending` 复习记录
+   - **已掌握**：将当前 stage 标记为 `done`（后续 stage 记录已存在，无需新建）
+   - **未掌握**：将对应 item 状态改回 `unmastered`，将该 item 所有 `pending` 状态的复习记录标记为 `skipped`。后续重新标记 mastered 时将重新生成全部 6 条记录
 3. 用户也可在「艾宾浩斯查询器」中提前查看未来计划
 
 ### 8.3 提醒开关
 
-- 开关存储于用户本地偏好（或后端 user 表扩展字段）
+- 开关存储于后端 `users` 表扩展字段 `ebbinghaus_reminder_enabled`（布尔值），支持多设备同步
 - 关闭时：首页不显示「今日待复习」区块，但数据仍记录，查询器中仍可查看
 - 开启时：首页顶部或侧边显示待复习数量角标
 
@@ -717,10 +875,15 @@ for stage in [1, 2, 3, 4, 5, 6]:
 
 ### 10.2 安全
 
-- 密码 bcrypt 加密
-- JWT 鉴权，过期自动跳转登录
+- 密码 bcrypt 加密（强度 10）
+- JWT 鉴权（有效期 7 天），存储于 localStorage
+- JWT 过期策略：后端维护 Token 黑名单，密码重置后旧 Token 立即失效
+- 登出流程：前端清除 localStorage 中的 Token，后端将该 Token 加入黑名单（有效期内保持）
+- CSRF 防护：使用 Cookie + Header 双重验证（后端检查 Origin 头）
+- XSS 防护：前端输入内容进行 HTML 转义，后端输出时进行内容过滤
 - AI API Key 仅后端持有，前端不可见
 - 注册上限 50 人，超限返回友好提示
+- 数据备份与恢复：管理员导出数据时进行完整性校验，恢复前确认覆盖策略，支持回滚至备份点
 
 ### 10.3 兼容性
 
