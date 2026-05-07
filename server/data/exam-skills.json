@@ -1,0 +1,158 @@
+{
+  "skills": [
+    {
+      "id": "skill-r1",
+      "type": "reading",
+      "subtype": "细节题",
+      "name": "细节理解题",
+      "description": "考查对文章中具体事实和信息的理解能力",
+      "approach": [
+        "1. 准确定位关键词",
+        "2. 回原文找到对应句子",
+        "3. 仔细比对原文与选项",
+        "4. 警惕偷换概念、无中生有、过度推断"
+      ],
+      "example": "Which of the following is mentioned...? / According to the passage..."
+    },
+    {
+      "id": "skill-r2",
+      "type": "reading",
+      "subtype": "推理题",
+      "name": "推理判断题",
+      "description": "考查根据文章信息进行逻辑推理的能力",
+      "approach": [
+        "1. 识别题干中的关键词",
+        "2. 在原文中定位相关段落",
+        "3. 基于原文信息合理推断，不可过度推理",
+        "4. 区分'字面意思'与'隐含意义'"
+      ],
+      "example": "It can be inferred from... / The author implies that..."
+    },
+    {
+      "id": "skill-r3",
+      "type": "reading",
+      "subtype": "词义题",
+      "name": "词义猜测题",
+      "description": "考查根据上下文推断词义的能力",
+      "approach": [
+        "1. 找到该词在原文中的位置",
+        "2. 分析上下文逻辑关系（转折、因果、对比等）",
+        "3. 利用构词法分析词根词缀",
+        "4. 选择最符合语境的含义"
+      ],
+      "example": "The word/phrase ... most nearly means..."
+    },
+    {
+      "id": "skill-r4",
+      "type": "reading",
+      "subtype": "主旨题",
+      "name": "主旨大意题",
+      "description": "考查对文章整体主题和中心思想的把握",
+      "approach": [
+        "1. 通读全文，把握文章主线",
+        "2. 关注首尾段和每段首句",
+        "3. 排除过于具体或过于宽泛的选项",
+        "4. 选择能概括全文核心内容的选项"
+      ],
+      "example": "The passage is mainly about... / The best title for the passage is..."
+    },
+    {
+      "id": "skill-r5",
+      "type": "reading",
+      "subtype": "态度题",
+      "name": "观点态度题",
+      "description": "考查对作者或文中人物态度观点的理解",
+      "approach": [
+        "1. 关注文中表示情感态度的词汇",
+        "2. 分析作者用词的感情色彩",
+        "3. 注意转折词后的内容往往表达真实态度",
+        "4. 警惕'未提及'和'中性'态度的区别"
+      ],
+      "example": "The author's attitude toward... is... / The tone of the passage can be described as..."
+    },
+    {
+      "id": "skill-r6",
+      "type": "reading",
+      "subtype": "结构题",
+      "name": "文章结构题",
+      "description": "考查对文章整体结构和行文思路的分析",
+      "approach": [
+        "1. 识别文章的段落功能",
+        "2. 把握段落之间的逻辑关系",
+        "3. 关注衔接词和指代关系",
+        "4. 理解文章的论证方式"
+      ],
+      "example": "The passage is organized in... / Which of the following best describes..."
+    },
+    {
+      "id": "skill-c1",
+      "type": "cloze",
+      "subtype": "词汇",
+      "name": "词汇辨析题",
+      "description": "考查词语辨析和固定搭配",
+      "approach": [
+        "1. 分析空格所在句子的语法结构",
+        "2. 关注空格前后的搭配关系",
+        "3. 辨析近义词或形近词的区别",
+        "4. 结合上下文确定最佳答案"
+      ],
+      "tips": "完形填空重点考查：动词短语搭配、介词搭配、形容词与介词搭配、名词与介词搭配等"
+    },
+    {
+      "id": "skill-c2",
+      "type": "cloze",
+      "subtype": "逻辑",
+      "name": "逻辑关系题",
+      "description": "考查文章逻辑连贯性和上下文衔接",
+      "approach": [
+        "1. 分析空格所在句与前后句的关系",
+        "2. 识别常见逻辑信号词",
+        "3. 注意and/but/however/therefore/because等连词",
+        "4. 选择符合语境的逻辑连接词"
+      ],
+      "logicTypes": ["转折", "因果", "递进", "对比", "举例", "解释"]
+    },
+    {
+      "id": "skill-n1",
+      "type": "new",
+      "subtype": "信息匹配",
+      "name": "信息匹配题",
+      "description": "七选五/小标题题型",
+      "approach": [
+        "1. 先看选项，划出关键词",
+        "2. 分析空前空后的逻辑关系",
+        "3. 关注代词和指示词",
+        "4. 注意段落主题句"
+      ],
+      "tips": "重点关注：代词指代、逻辑连接词、段落结构"
+    },
+    {
+      "id": "skill-w1",
+      "type": "writing",
+      "subtype": "小作文",
+      "name": "应用文写作",
+      "description": "书信、通知、备忘录等应用文",
+      "template": {
+        "structure": ["称呼", "正文（2-3段）", "结束语", "署名"],
+        "length": "100词左右"
+      },
+      "commonTypes": ["建议信", "投诉信", "感谢信", "道歉信", "申请信", "邀请信", "通知"]
+    },
+    {
+      "id": "skill-w2",
+      "type": "writing",
+      "subtype": "大作文",
+      "name": "议论文写作",
+      "description": "图画/图表作文",
+      "template": {
+        "structure": [
+          "第一段：描述图片内容（2-3句）",
+          "第二段：阐述寓意/分析原因（4-6句）",
+          "第三段：总结评论/提出建议（2-3句）"
+        ],
+        "length": "160-200词"
+      },
+      "tips": "英语（一）通常为图画作文，英语（二）通常为图表作文"
+    }
+  ]
+}
