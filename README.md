@@ -22,8 +22,16 @@ languagePage/
 │   ├── config/           # 配置（pg 连接池）
 │   └── server.js         # 服务器入口（Vercel Serverless 导出）
 ├── public/               # 静态文件
-│   └── index.html        # 主页
-├── docs/                 # 文档
+│   └── index.html        # 主页（单页应用，含所有CSS/JS）
+├── database/             # 数据库脚本
+│   ├── migrations/       # 数据库初始化脚本
+│   └── seeds/            # 种子数据脚本
+├── languagesource/       # 原始英语语料素材（未整合）
+├── docs/                 # 产品文档
+├── frontend/             # （空目录，未使用）
+├── style-showcase.html   # 风格预览展示页
+├── 启动.bat / 开始.bat   # Windows 一键启动脚本
+├── start.bat / start.ps1 # Windows 启动菜单脚本
 ├── vercel.json           # Vercel 部署配置
 ├── package.json
 └── README.md

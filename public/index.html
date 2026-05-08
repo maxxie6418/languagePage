@@ -95,6 +95,39 @@
             --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.35);
         }
 
+        /* 卡片主题 - 可亲近的高级感 */
+        [data-theme="card"] {
+            --bg-base: #f5f5f3 !important;
+            --bg-elevated: #ffffff !important;
+            --bg-card: #ffffff !important;
+            --bg-hover: #fafaf9 !important;
+            --bg-active: #f3f3f1 !important;
+            --border: #e8e6e3 !important;
+            --border-light: #dcd9d6 !important;
+            --text-primary: #1c1c1c !important;
+            --text-secondary: #4a4a48 !important;
+            --text-tertiary: #6b6b68 !important;
+            --text-muted: #9a9a97 !important;
+            --primary: #5c6e5c !important;
+            --primary-hover: #4a5c4a !important;
+            --primary-dim: rgba(92, 110, 92, 0.06) !important;
+            --primary-dim-hover: rgba(92, 110, 92, 0.12) !important;
+            --success: #6b8b6b !important;
+            --success-dim: rgba(107, 139, 107, 0.08) !important;
+            --warning: #e87d2b !important;
+            --warning-dim: rgba(232, 125, 43, 0.08) !important;
+            --error: #c76b6b !important;
+            --error-dim: rgba(199, 107, 107, 0.08) !important;
+            --accent-orange: #e87d2b !important;
+            --accent-green: #5c6e5c !important;
+            --accent-gray: #8a8a87 !important;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+            --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.06) !important;
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08) !important;
+            --radius: 16px !important;
+            --radius-sm: 10px !important;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
@@ -219,6 +252,7 @@
             border-right: 1px solid var(--border); display: flex; flex-direction: column;
             position: fixed; height: 100vh; z-index: 100;
             box-shadow: var(--shadow-md);
+            overflow-y: auto;
         }
         .sidebar-header {
             padding: 20px 20px 16px; display: flex; align-items: center; gap: 12px;
@@ -232,7 +266,7 @@
         }
         .logo-text { font-size: 17px; font-weight: 700; color: var(--text-primary); }
 
-        .nav-section { padding: 12px 8px; }
+        .nav-section { padding: 12px 8px; padding-bottom: 140px; }
         .nav-section-title {
             font-size: 10px; font-weight: 600; color: var(--text-muted);
             text-transform: uppercase; letter-spacing: 1px;
@@ -254,8 +288,24 @@
         .nav-item.active .nav-icon { opacity: 1; }
 
         .sidebar-footer {
-            margin-top: auto; padding: 12px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px;
             border-top: 1px solid var(--border);
+            background: var(--bg-elevated);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .sidebar-version {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: center;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+            letter-spacing: 0.5px;
         }
         .user-mini {
             display: flex; align-items: center; gap: 10px;
@@ -1190,6 +1240,342 @@
         .empty-state h4 { font-size: 14px; color: var(--text-secondary); margin-bottom: 6px; }
         .empty-state p { font-size: 12px; }
 
+        /* ===== 卡片主题专属样式 ===== */
+        [data-theme="card"] .sidebar {
+            background: linear-gradient(180deg, #ffffff 0%, #fafaf9 100%);
+            border-right: 1px solid #e8e6e3;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.04);
+        }
+        [data-theme="card"] .sidebar-header {
+            padding-bottom: 20px;
+            border-bottom: none;
+        }
+        [data-theme="card"] .logo-icon {
+            background: linear-gradient(135deg, #5c6e5c 0%, #6b8b6b 100%);
+            box-shadow: 0 4px 16px rgba(92, 110, 92, 0.25);
+        }
+        [data-theme="card"] .nav-section-title {
+            color: #9a9a97;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+        }
+        [data-theme="card"] .nav-item {
+            border-radius: 12px;
+            margin-bottom: 4px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        [data-theme="card"] .nav-item:hover {
+            background: rgba(92, 110, 92, 0.06);
+            transform: translateX(6px);
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        [data-theme="card"] .nav-item.active {
+            background: linear-gradient(135deg, rgba(92, 110, 92, 0.08) 0%, rgba(92, 110, 92, 0.04) 100%);
+            border: 1.5px solid #5c6e5c;
+            box-shadow: 0 4px 12px rgba(92, 110, 92, 0.12);
+        }
+        [data-theme="card"] .top-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(232, 230, 227, 0.8);
+        }
+        [data-theme="card"] .header-nav-item {
+            border-radius: 10px;
+            padding: 8px 20px;
+        }
+        [data-theme="card"] .header-nav-item.active {
+            background: rgba(92, 110, 92, 0.08);
+            border: 1.5px solid #5c6e5c;
+        }
+        [data-theme="card"] .header-search input {
+            background: #f5f5f3;
+            border: 1px solid #e8e6e3;
+            border-radius: 12px;
+        }
+        [data-theme="card"] .header-search input:focus {
+            border-color: #5c6e5c;
+            box-shadow: 0 0 0 4px rgba(92, 110, 92, 0.08);
+        }
+        [data-theme="card"] .stat-card {
+            background: #ffffff;
+            border: 1px solid #e8e6e3;
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        [data-theme="card"] .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #5c6e5c 0%, #e87d2b 100%);
+        }
+        [data-theme="card"] .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+            border-color: #dcd9d6;
+        }
+        [data-theme="card"] .stat-card-value {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -2px;
+        }
+        [data-theme="card"] .stat-card-icon {
+            background: linear-gradient(135deg, rgba(92, 110, 92, 0.1) 0%, rgba(92, 110, 92, 0.05) 100%);
+            border: 1px solid rgba(92, 110, 92, 0.15);
+        }
+        [data-theme="card"] .panel-card {
+            background: #ffffff;
+            border: 1px solid #e8e6e3;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+        [data-theme="card"] .panel-card:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+            border-color: #dcd9d6;
+        }
+        [data-theme="card"] .panel-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c1c1c;
+        }
+        [data-theme="card"] .welcome-text h2 {
+            background: linear-gradient(135deg, #1c1c1c 0%, #5c6e5c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        [data-theme="card"] .check-in-card {
+            background: linear-gradient(135deg, rgba(232, 125, 43, 0.06) 0%, rgba(232, 125, 43, 0.02) 100%);
+            border: 1px solid rgba(232, 125, 43, 0.15);
+            border-radius: 16px;
+        }
+        [data-theme="card"] .check-in-days {
+            color: #e87d2b;
+            font-weight: 700;
+        }
+        [data-theme="card"] .recommend-card {
+            background: #fafaf9;
+            border: 1px solid #e8e6e3;
+            border-radius: 14px;
+            padding: 16px;
+        }
+        [data-theme="card"] .recommend-card:hover {
+            background: #ffffff;
+            border-color: #dcd9d6;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        }
+        [data-theme="card"] .recommend-card-icon {
+            background: linear-gradient(135deg, #5c6e5c 0%, #6b8b6b 100%);
+            color: #ffffff;
+        }
+        [data-theme="card"] .word-card {
+            background: #ffffff;
+            border: 1px solid #e8e6e3;
+            border-radius: 16px;
+            padding: 18px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        [data-theme="card"] .word-card:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.07);
+            border-color: #dcd9d6;
+        }
+        [data-theme="card"] .word-card-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        [data-theme="card"] .word-table-wrap {
+            background: #ffffff;
+            border: 1px solid #e8e6e3;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+        [data-theme="card"] .word-table thead {
+            background: #fafaf9;
+        }
+        [data-theme="card"] .word-table tbody tr:hover {
+            background: rgba(92, 110, 92, 0.04);
+        }
+        [data-theme="card"] .status-badge {
+            padding: 5px 14px;
+            border-radius: 20px;
+        }
+        [data-theme="card"] .status-learning {
+            background: rgba(232, 125, 43, 0.08);
+            color: #e87d2b;
+        }
+        [data-theme="card"] .status-mastered {
+            background: rgba(107, 139, 107, 0.08);
+            color: #6b8b6b;
+        }
+        [data-theme="card"] .btn-primary {
+            background: linear-gradient(135deg, #5c6e5c 0%, #4a5c4a 100%);
+            color: #ffffff;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        [data-theme="card"] .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(92, 110, 92, 0.3);
+        }
+        [data-theme="card"] .btn-ghost {
+            border: 1.5px solid #e8e6e3;
+            border-radius: 10px;
+        }
+        [data-theme="card"] .btn-ghost:hover {
+            background: #fafaf9;
+            border-color: #dcd9d6;
+        }
+        [data-theme="card"] .record-item {
+            background: #fafaf9;
+            border: 1px solid #e8e6e3;
+            border-radius: 12px;
+        }
+        [data-theme="card"] .record-item:hover {
+            background: #ffffff;
+            border-color: #dcd9d6;
+        }
+        [data-theme="card"] .record-icon {
+            background: rgba(92, 110, 92, 0.08);
+            color: #5c6e5c;
+        }
+        [data-theme="card"] .ability-fill {
+            background: linear-gradient(90deg, #5c6e5c 0%, #6b8b6b 100%);
+            border-radius: 4px;
+        }
+        [data-theme="card"] .progress-fill {
+            background: linear-gradient(90deg, #5c6e5c 0%, #e87d2b 100%);
+        }
+        [data-theme="card"] .study-sidebar {
+            background: #ffffff;
+            border: 1px solid #e8e6e3;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+        [data-theme="card"] .study-nav-item {
+            border-radius: 10px;
+        }
+        [data-theme="card"] .study-nav-item.active {
+            background: rgba(92, 110, 92, 0.08);
+            border: 1.5px solid #5c6e5c;
+        }
+        [data-theme="card"] .toolbar-group {
+            background: #ffffff;
+            border: 1px solid #e8e6e3;
+        }
+        [data-theme="card"] .toolbar-btn.active {
+            background: #5c6e5c;
+            color: #ffffff;
+        }
+        [data-theme="card"] .filter-select {
+            background: #f5f5f3;
+            border: 1px solid #e8e6e3;
+            border-radius: 10px;
+        }
+        [data-theme="card"] .option-item {
+            border: 1.5px solid #e8e6e3;
+            border-radius: 12px;
+            padding: 12px 16px;
+        }
+        [data-theme="card"] .option-item:hover {
+            border-color: #5c6e5c;
+            background: rgba(92, 110, 92, 0.04);
+        }
+        [data-theme="card"] .option-item.selected {
+            background: rgba(92, 110, 92, 0.06);
+            border-color: #5c6e5c;
+        }
+        [data-theme="card"] .question-content {
+            background: #ffffff;
+            border: 1px solid #e8e6e3;
+            border-radius: 16px;
+        }
+        [data-theme="card"] .quiz-start-card {
+            background: #ffffff;
+            border: 1px solid #e8e6e3;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+        [data-theme="card"] .mistake-item {
+            background: #ffffff;
+            border: 1px solid #e8e6e3;
+            border-radius: 12px;
+        }
+        [data-theme="card"] .mistake-count {
+            background: rgba(199, 107, 107, 0.08);
+            color: #c76b6b;
+        }
+        [data-theme="card"] .toggle-switch {
+            background: #e8e6e3;
+        }
+        [data-theme="card"] .toggle-switch.active {
+            background: linear-gradient(135deg, #5c6e5c 0%, #6b8b6b 100%);
+        }
+        [data-theme="card"] .ai-float {
+            background: #ffffff;
+            border: 1px solid #e8e6e3;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+        [data-theme="card"] .ai-header {
+            background: #fafaf9;
+            border-bottom: 1px solid #e8e6e3;
+        }
+        [data-theme="card"] .ai-msg.user {
+            background: linear-gradient(135deg, #5c6e5c 0%, #4a5c4a 100%);
+            color: #ffffff;
+        }
+        [data-theme="card"] .ai-msg.bot {
+            background: #f5f5f3;
+        }
+        [data-theme="card"] .modal {
+            background: #ffffff;
+            border: 1px solid #e8e6e3;
+            border-radius: 20px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+        }
+        [data-theme="card"] .modal-overlay {
+            backdrop-filter: blur(8px);
+        }
+        [data-theme="card"] .form-group input {
+            background: #f5f5f3;
+            border: 1px solid #e8e6e3;
+            border-radius: 10px;
+        }
+        [data-theme="card"] .form-group input:focus {
+            border-color: #5c6e5c;
+            box-shadow: 0 0 0 4px rgba(92, 110, 92, 0.08);
+        }
+        [data-theme="card"] .hint-box {
+            background: rgba(92, 110, 92, 0.06);
+            border: 1px solid rgba(92, 110, 92, 0.1);
+            border-radius: 12px;
+        }
+        [data-theme="card"] .theme-switcher {
+            background: #f5f5f3;
+            border: 1px solid #e8e6e3;
+        }
+        [data-theme="card"] .theme-btn.active {
+            background: linear-gradient(135deg, #5c6e5c 0%, #6b8b6b 100%);
+            color: #ffffff;
+        }
+        [data-theme="card"] .badge-ongoing {
+            background: rgba(92, 110, 92, 0.08);
+            color: #5c6e5c;
+        }
+        [data-theme="card"] .calendar-day.has-review {
+            background: rgba(92, 110, 92, 0.08);
+            color: #5c6e5c;
+        }
+        [data-theme="card"] .calendar-day.today {
+            border-color: #5c6e5c;
+        }
+
         /* 响应式 */
         @media (max-width: 1100px) {
             .content-grid { grid-template-columns: 1fr; }
@@ -1314,6 +1700,7 @@
                     <div class="user-role" id="userRole">点击登录以同步记录</div>
                 </div>
             </div>
+            <div class="sidebar-version">v2.1.0</div>
         </div>
     </aside>
 
@@ -1338,6 +1725,7 @@
                     <button class="theme-btn active" data-theme="dark" title="深色主题" onclick="switchTheme('dark')">🌙</button>
                     <button class="theme-btn" data-theme="light" title="明亮主题" onclick="switchTheme('light')">☀️</button>
                     <button class="theme-btn" data-theme="vibrant" title="活力主题" onclick="switchTheme('vibrant')">🎨</button>
+                    <button class="theme-btn" data-theme="card" title="卡片主题" onclick="switchTheme('card')">🃏</button>
                 </div>
                 <div class="header-icon-btn" onclick="openAiChat()">🤖</div>
                 <div class="header-icon-btn">
@@ -1485,7 +1873,7 @@
                         <button class="btn btn-sm btn-ghost" onclick="toggleDetectMode()">退出检测</button>
                     </div>
 
-                    <div id="wordListView">
+                    <div id="wordListView" style="display:none;">
                         <div class="word-table-wrap">
                             <table class="word-table">
                                 <thead>
@@ -2707,37 +3095,78 @@
                         </div>
                         <div class="setting-item">
                             <div>
-                                <div class="setting-label">首页提醒</div>
-                                <div class="setting-desc">在首页显示今日待复习</div>
+                                <div class="setting-label">首页待复习提醒</div>
+                                <div class="setting-desc">在首页显示今日待复习内容</div>
                             </div>
-                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                            <div class="toggle-switch" id="ebbinghausReminder" onclick="toggleEbbinghausReminder()"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">深色模式</div>
+                                <div class="setting-desc">使用深色主题界面</div>
+                            </div>
+                            <div class="toggle-switch" onclick="switchTheme('dark')"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">卡片主题</div>
+                                <div class="setting-desc">使用卡片式明亮主题</div>
+                            </div>
+                            <div class="toggle-switch" onclick="switchTheme('card')"></div>
                         </div>
                     </div>
 
                     <!-- AI 配置 -->
                     <div class="panel-card">
-                        <h3 style="margin-bottom:14px;">🤖 AI 配置</h3>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                            <h3>🤖 AI 配置</h3>
+                            <span id="aiStatusBadge" class="badge-ongoing" style="font-size:11px; padding:3px 8px; border-radius:12px;">🔄 加载中</span>
+                        </div>
                         <div class="setting-item">
                             <div>
-                                <div class="setting-label">AI 功能状态</div>
-                                <div class="setting-desc" id="aiStatusDisplay">当前状态：游客模式不可用</div>
+                                <div class="setting-label">AI 功能开关</div>
+                                <div class="setting-desc" id="aiStatusDesc">AI 学习助手功能总开关</div>
                             </div>
-                            <span id="aiStatusBadge" style="color:var(--text-muted); font-size:12px; font-weight:500;">🔒 未登录</span>
+                            <div class="toggle-switch" id="aiEnabledToggle" onclick="toggleAiEnabled()"></div>
                         </div>
-                        <div class="setting-item" id="aiKeySetting" style="display:none;">
-                            <div><div class="setting-label">API Key</div><div class="setting-desc">DeepSeek API 密钥（管理员配置）</div></div>
-                            <input type="password" value="sk-••••••••" style="width:180px; padding:5px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12px; background:var(--bg-base); color:var(--text-primary);">
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">API Key</div>
+                                <div class="setting-desc" id="aiKeyDesc">DeepSeek API 密钥（仅管理员可编辑）</div>
+                            </div>
+                            <div style="display:flex; gap:6px; align-items:center;">
+                                <input type="password" id="aiApiKey" placeholder="输入 API Key" style="width:180px; padding:5px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12px; background:var(--bg-base); color:var(--text-primary);" readonly>
+                                <button class="btn btn-sm btn-ghost" id="aiKeyEditBtn" onclick="toggleAiKeyEdit()">编辑</button>
+                            </div>
                         </div>
-                        <div class="setting-item" id="aiUrlSetting" style="display:none;">
-                            <div><div class="setting-label">Base URL</div><div class="setting-desc">API 服务器地址</div></div>
-                            <input type="text" value="https://api.deepseek.com/v1" style="width:180px; padding:5px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12px; background:var(--bg-base); color:var(--text-primary);">
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Base URL</div>
+                                <div class="setting-desc">API 服务器地址</div>
+                            </div>
+                            <input type="text" id="aiBaseUrl" placeholder="https://api.deepseek.com/v1" style="width:260px; padding:5px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12px; background:var(--bg-base); color:var(--text-primary);" readonly>
                         </div>
-                        <div class="setting-item" id="aiModelSetting" style="display:none;">
-                            <div><div class="setting-label">模型选择</div></div>
-                            <select class="filter-select">
-                                <option>deepseek-chat</option>
-                                <option>deepseek-reasoner</option>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">模型选择</div>
+                                <div class="setting-desc">选择 AI 模型</div>
+                            </div>
+                            <select class="filter-select" id="aiModelSelect" disabled>
+                                <option value="deepseek-chat">deepseek-chat</option>
+                                <option value="deepseek-reasoner">deepseek-reasoner</option>
                             </select>
+                        </div>
+                        <div class="setting-item">
+                            <button class="btn btn-primary btn-block" onclick="saveAiConfig()" style="margin-top:8px;">💾 保存 AI 配置</button>
+                        </div>
+                        <div class="setting-item" style="border-bottom:none;">
+                            <div class="setting-label">AI 功能说明</div>
+                            <div style="font-size:11px; color:var(--text-tertiary); line-height:1.6; margin-top:4px; padding:10px; background:var(--bg-base); border-radius:var(--radius-sm);">
+                                <p>• <strong>单词解析</strong>：点击单词卡片的 🤖 按钮，AI 会详细解析单词的词根词缀、搭配和例句</p>
+                                <p>• <strong>语法拆解</strong>：使用语法拆解工具分析长难句结构</p>
+                                <p>• <strong>作文批改</strong>：提交作文后获得 AI 评分和修改建议</p>
+                                <p>• <strong>学习问答</strong>：通过右上角 🤖 按钮开启对话</p>
+                            </div>
                         </div>
                     </div>
 
@@ -2745,28 +3174,98 @@
                     <div class="panel-card">
                         <h3 style="margin-bottom:14px;">💾 数据管理</h3>
                         <div class="setting-item">
-                            <div><div class="setting-label">导出学习数据</div><div class="setting-desc">将个人学习记录导出为 JSON</div></div>
-                            <button class="btn btn-sm btn-ghost" onclick="exportUserData()">导出</button>
+                            <div><div class="setting-label">导出学习数据</div><div class="setting-desc">将个人学习记录导出为 JSON 文件</div></div>
+                            <button class="btn btn-sm btn-primary" onclick="exportUserData()">📥 导出</button>
                         </div>
                         <div class="setting-item">
                             <div><div class="setting-label">导入学习数据</div><div class="setting-desc">从 JSON 文件恢复学习记录</div></div>
-                            <button class="btn btn-sm btn-ghost" onclick="importUserData()">导入</button>
+                            <label class="btn btn-sm btn-ghost" style="cursor:pointer;">📤 导入
+                                <input type="file" accept=".json" onchange="handleImportFile(event)" style="display:none;">
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div><div class="setting-label">学习统计</div><div class="setting-desc" id="userStatsDesc">查看学习数据概览</div></div>
+                            <button class="btn btn-sm btn-ghost" onclick="showUserStats()">📊 查看</button>
+                        </div>
+                        <div class="setting-item" style="border-bottom:none;">
+                            <div style="padding:10px; background:var(--bg-base); border-radius:var(--radius-sm);">
+                                <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">📊 当前学习进度</div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                    <span style="font-size:12px; color:var(--text-secondary);">单词掌握率</span>
+                                    <span style="font-size:12px; font-weight:600; color:var(--text-primary);" id="statsWordRate">-</span>
+                                </div>
+                                <div style="height:4px; background:var(--bg-hover); border-radius:2px; overflow:hidden;">
+                                    <div class="stats-bar-fill" id="statsWordBar" style="height:100%; background:var(--primary); border-radius:2px; width:0%;"></div>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:11px;">
+                                    <span style="color:var(--text-muted);">已掌握: <span style="color:var(--success); font-weight:500;" id="statsMastered">-</span></span>
+                                    <span style="color:var(--text-muted);">学习中: <span style="color:var(--warning); font-weight:500;" id="statsLearning">-</span></span>
+                                    <span style="color:var(--text-muted);">未掌握: <span style="color:var(--text-muted); font-weight:500;" id="statsUnmastered">-</span></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- 艾宾浩斯设置 -->
                     <div class="panel-card">
-                        <h3 style="margin-bottom:14px;">🧠 艾宾浩斯设置</h3>
-                        <div style="padding:12px 0;">
-                            <div class="setting-label">复习间隔（固定）</div>
-                            <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
-                                <span style="padding:3px 8px; background:var(--bg-hover); border-radius:12px; font-size:11px; color:var(--text-secondary);">1天</span>
-                                <span style="padding:3px 8px; background:var(--bg-hover); border-radius:12px; font-size:11px; color:var(--text-secondary);">2天</span>
-                                <span style="padding:3px 8px; background:var(--bg-hover); border-radius:12px; font-size:11px; color:var(--text-secondary);">4天</span>
-                                <span style="padding:3px 8px; background:var(--bg-hover); border-radius:12px; font-size:11px; color:var(--text-secondary);">7天</span>
-                                <span style="padding:3px 8px; background:var(--bg-hover); border-radius:12px; font-size:11px; color:var(--text-secondary);">15天</span>
-                                <span style="padding:3px 8px; background:var(--bg-hover); border-radius:12px; font-size:11px; color:var(--text-secondary);">30天</span>
+                        <h3 style="margin-bottom:14px;">🧠 艾宾浩斯记忆系统</h3>
+                        <div style="padding:12px; background:var(--bg-base); border-radius:var(--radius-sm); margin-bottom:14px;">
+                            <div class="setting-label" style="margin-bottom:8px;">复习间隔序列</div>
+                            <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                                <span style="padding:4px 10px; background:var(--primary-dim); border-radius:12px; font-size:12px; color:var(--primary); font-weight:500;">1天</span>
+                                <span style="color:var(--text-muted);">→</span>
+                                <span style="padding:4px 10px; background:var(--primary-dim); border-radius:12px; font-size:12px; color:var(--primary); font-weight:500;">2天</span>
+                                <span style="color:var(--text-muted);">→</span>
+                                <span style="padding:4px 10px; background:var(--primary-dim); border-radius:12px; font-size:12px; color:var(--primary); font-weight:500;">4天</span>
+                                <span style="color:var(--text-muted);">→</span>
+                                <span style="padding:4px 10px; background:var(--primary-dim); border-radius:12px; font-size:12px; color:var(--primary); font-weight:500;">7天</span>
+                                <span style="color:var(--text-muted);">→</span>
+                                <span style="padding:4px 10px; background:var(--primary-dim); border-radius:12px; font-size:12px; color:var(--primary); font-weight:500;">15天</span>
+                                <span style="color:var(--text-muted);">→</span>
+                                <span style="padding:4px 10px; background:var(--success-dim); border-radius:12px; font-size:12px; color:var(--success); font-weight:500;">30天</span>
                             </div>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">今日待复习</div>
+                                <div class="setting-desc" id="todayReviewDesc">查看今日需要复习的内容</div>
+                            </div>
+                            <button class="btn btn-sm btn-primary" onclick="goToTodayReview()">📋 查看</button>
+                        </div>
+                        <div class="setting-item" style="border-bottom:none;">
+                            <div>
+                                <div class="setting-label">复习日历</div>
+                                <div class="setting-desc">查看未来复习计划</div>
+                            </div>
+                            <button class="btn btn-sm btn-ghost" onclick="openReviewCalendar()">📅 查看</button>
+                        </div>
+                    </div>
+
+                    <!-- 学习目标设置 -->
+                    <div class="panel-card">
+                        <h3 style="margin-bottom:14px;">🎯 学习目标</h3>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">每日单词目标</div>
+                                <div class="setting-desc">设定每天学习的单词数量</div>
+                            </div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <input type="number" id="dailyWordGoal" value="10" min="1" max="100" style="width:80px; padding:5px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12px; background:var(--bg-base); color:var(--text-primary); text-align:center;">
+                                <span style="font-size:12px; color:var(--text-secondary);">个单词/天</span>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">每日真题目标</div>
+                                <div class="setting-desc">设定每天练习的真题数量</div>
+                            </div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <input type="number" id="dailyQuestionGoal" value="5" min="1" max="50" style="width:80px; padding:5px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12px; background:var(--bg-base); color:var(--text-primary); text-align:center;">
+                                <span style="font-size:12px; color:var(--text-secondary);">题/天</span>
+                            </div>
+                        </div>
+                        <div class="setting-item" style="border-bottom:none;">
+                            <button class="btn btn-primary btn-block" onclick="saveStudyGoals()">💾 保存目标</button>
                         </div>
                     </div>
 
@@ -2774,16 +3273,28 @@
                     <div class="panel-card" id="adminSection">
                         <h3 style="margin-bottom:14px;">⚙️ 管理员专区</h3>
                         <div class="setting-item">
-                            <div><div class="setting-label">用户管理</div><div class="setting-desc">查看和管理注册用户及 AI 权限</div></div>
+                            <div><div class="setting-label">用户管理</div><div class="setting-desc">查看和管理注册用户及权限</div></div>
                             <button class="btn btn-sm btn-primary" onclick="toggleUserManagement()">管理</button>
                         </div>
                         <div class="setting-item">
                             <div><div class="setting-label">导入单词 MD</div><div class="setting-desc">批量导入单词数据</div></div>
-                            <button class="btn btn-sm btn-ghost">导入</button>
+                            <label class="btn btn-sm btn-ghost" style="cursor:pointer;">📥 导入
+                                <input type="file" accept=".md" onchange="handleImportWords(event)" style="display:none;">
+                            </label>
                         </div>
                         <div class="setting-item">
-                            <div><div class="setting-label">全站备份</div><div class="setting-desc">导出完整数据库备份</div></div>
-                            <button class="btn btn-sm btn-ghost">备份</button>
+                            <div><div class="setting-label">导入知识点 MD</div><div class="setting-desc">批量导入语法等知识点</div></div>
+                            <label class="btn btn-sm btn-ghost" style="cursor:pointer;">📥 导入
+                                <input type="file" accept=".md" onchange="handleImportKnowledge(event)" style="display:none;">
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div><div class="setting-label">全站数据备份</div><div class="setting-desc">导出完整数据库备份</div></div>
+                            <button class="btn btn-sm btn-primary" onclick="exportAllData()">📦 备份</button>
+                        </div>
+                        <div class="setting-item" style="border-bottom:none;">
+                            <div><div class="setting-label">系统状态</div><div class="setting-desc" id="systemStatus">检查系统运行状态</div></div>
+                            <button class="btn btn-sm btn-ghost" onclick="checkSystemStatus()">🔍 检查</button>
                         </div>
                     </div>
                 </div>
@@ -3454,43 +3965,115 @@ function openGrammarTool() { document.getElementById('grammarModal').classList.a
 function closeGrammarModal() { document.getElementById('grammarModal').classList.remove('active'); }
 
 // ===== 设置 =====
+let aiConfig = {};
+
+async function loadAiConfig() {
+    if (!isLoggedIn) return;
+    try {
+        const config = await API.get('/api/admin/ai-config');
+        aiConfig = config;
+        updateAiConfigUI(config);
+    } catch (e) {
+        console.error('加载AI配置失败:', e);
+        aiConfig = { is_enabled: 0 };
+        updateAiConfigUI(aiConfig);
+    }
+}
+
+function updateAiConfigUI(config) {
+    const enabledToggle = document.getElementById('aiEnabledToggle');
+    const keyInput = document.getElementById('aiApiKey');
+    const urlInput = document.getElementById('aiBaseUrl');
+    const modelSelect = document.getElementById('aiModelSelect');
+    const aiBadge = document.getElementById('aiStatusBadge');
+    const aiDesc = document.getElementById('aiKeyDesc');
+
+    if (enabledToggle) {
+        enabledToggle.classList.toggle('active', config.is_enabled === 1);
+    }
+    if (keyInput) {
+        keyInput.value = config.api_key || '';
+    }
+    if (urlInput) {
+        urlInput.value = config.base_url || 'https://api.deepseek.com/v1';
+    }
+    if (modelSelect) {
+        modelSelect.value = config.model || 'deepseek-chat';
+    }
+    if (aiBadge) {
+        if (!isLoggedIn) {
+            aiBadge.textContent = '🔒 未登录';
+            aiBadge.style.background = 'var(--bg-hover)';
+            aiBadge.style.color = 'var(--text-muted)';
+        } else if (!currentUser?.role === 'admin') {
+            aiBadge.textContent = '👤 普通用户';
+            aiBadge.style.background = 'var(--primary-dim)';
+            aiBadge.style.color = 'var(--primary)';
+        } else {
+            aiBadge.textContent = config.is_enabled === 1 ? '✅ 已启用' : '❌ 已禁用';
+            aiBadge.style.background = config.is_enabled === 1 ? 'var(--success-dim)' : 'var(--error-dim)';
+            aiBadge.style.color = config.is_enabled === 1 ? 'var(--success)' : 'var(--error)';
+        }
+    }
+    if (aiDesc) {
+        aiDesc.textContent = isLoggedIn && currentUser?.role === 'admin' 
+            ? 'DeepSeek API 密钥（管理员可编辑）' 
+            : 'AI 配置由管理员管理';
+    }
+
+    const isAdmin = isLoggedIn && currentUser?.role === 'admin';
+    if (keyInput) keyInput.readOnly = !isAdmin;
+    if (urlInput) urlInput.readOnly = !isAdmin;
+    if (modelSelect) modelSelect.disabled = !isAdmin;
+}
+
 async function updateSettingsDisplay() {
     const el = document.getElementById('currentUserDisplay');
-    const aiStatus = document.getElementById('aiStatusDisplay');
-    const aiBadge = document.getElementById('aiStatusBadge');
     const loginBtn = document.getElementById('loginBtn');
     if (el) el.textContent = isLoggedIn ? `已登录: ${currentUser?.username}` : '游客模式 - 点击左下角登录';
     if (loginBtn) loginBtn.textContent = isLoggedIn ? '退出登录' : '登录';
-    if (aiStatus) aiStatus.textContent = isLoggedIn ? '当前状态：已启用' : '当前状态：游客模式不可用';
-    if (aiBadge) {
-        aiBadge.textContent = isLoggedIn ? '✓ 已授权' : '🔒 未登录';
-        aiBadge.style.color = isLoggedIn ? 'var(--success)' : 'var(--text-muted)';
-    }
-    const aiVisible = isLoggedIn && currentUser?.role === 'admin';
-    document.querySelectorAll('#aiKeySetting, #aiUrlSetting, #aiModelSetting').forEach(el => { if (el) el.style.display = aiVisible ? '' : 'none'; });
 
-    if (isLoggedIn && currentUser?.role === 'admin') {
-        try {
-            const config = await API.get('/api/admin/ai-config');
-            const keyInput = document.querySelector('#aiKeySetting input');
-            const urlInput = document.querySelector('#aiUrlSetting input');
-            const modelSelect = document.querySelector('#aiModelSetting select');
-            if (keyInput) keyInput.value = config.api_key || '';
-            if (urlInput) urlInput.value = config.base_url || 'https://api.deepseek.com';
-            if (modelSelect) modelSelect.value = config.model || 'deepseek-chat';
-        } catch {}
-    }
     document.getElementById('adminSection').style.display = isLoggedIn && currentUser?.role === 'admin' ? 'block' : 'none';
+
+    await loadAiConfig();
+    await loadUserStats();
+    await loadEbbinghausReminder();
+}
+
+function toggleAiKeyEdit() {
+    const keyInput = document.getElementById('aiApiKey');
+    const editBtn = document.getElementById('aiKeyEditBtn');
+    if (keyInput && editBtn) {
+        keyInput.readOnly = !keyInput.readOnly;
+        editBtn.textContent = keyInput.readOnly ? '编辑' : '完成';
+        if (!keyInput.readOnly) {
+            keyInput.type = 'text';
+            keyInput.focus();
+        } else {
+            keyInput.type = 'password';
+        }
+    }
+}
+
+function toggleAiEnabled() {
+    if (!isLoggedIn || currentUser?.role !== 'admin') return;
+    const toggle = document.getElementById('aiEnabledToggle');
+    aiConfig.is_enabled = toggle.classList.contains('active') ? 0 : 1;
 }
 
 async function saveAiConfig() {
-    if (!isLoggedIn || currentUser?.role !== 'admin') return;
-    const api_key = document.querySelector('#aiKeySetting input')?.value || '';
-    const base_url = document.querySelector('#aiUrlSetting input')?.value || '';
-    const model = document.querySelector('#aiModelSetting select')?.value || 'deepseek-chat';
+    if (!isLoggedIn || currentUser?.role !== 'admin') {
+        alert('只有管理员可以修改AI配置');
+        return;
+    }
+    const api_key = document.getElementById('aiApiKey')?.value || '';
+    const base_url = document.getElementById('aiBaseUrl')?.value || '';
+    const model = document.getElementById('aiModelSelect')?.value || 'deepseek-chat';
+    const is_enabled = document.getElementById('aiEnabledToggle')?.classList.contains('active') || false;
     try {
-        await API.post('/api/admin/ai-config', { api_key, base_url, model, is_enabled: !!api_key });
+        await API.post('/api/admin/ai-config', { api_key, base_url, model, is_enabled });
         alert('AI 配置已保存');
+        await loadAiConfig();
     } catch (e) { alert(e.message); }
 }
 
@@ -3527,6 +4110,176 @@ function toggleUserManagement() {
 }
 
 function toggleAiPermission(el) { el.classList.toggle('active'); }
+
+async function loadUserStats() {
+    if (!isLoggedIn) {
+        document.getElementById('statsWordRate')?.textContent = '-';
+        document.getElementById('statsWordBar')?.style.width = '0%';
+        document.getElementById('statsMastered')?.textContent = '-';
+        document.getElementById('statsLearning')?.textContent = '-';
+        document.getElementById('statsUnmastered')?.textContent = '-';
+        return;
+    }
+    try {
+        const stats = await API.get('/api/words/user/stats');
+        const total = (stats.mastered || 0) + (stats.learning || 0) + (stats.unmastered || 0);
+        const rate = total > 0 ? Math.round(((stats.mastered || 0) / total) * 100) : 0;
+        document.getElementById('statsWordRate')?.textContent = rate + '%';
+        document.getElementById('statsWordBar')?.style.width = rate + '%';
+        document.getElementById('statsMastered')?.textContent = stats.mastered || 0;
+        document.getElementById('statsLearning')?.textContent = stats.learning || 0;
+        document.getElementById('statsUnmastered')?.textContent = stats.unmastered || 0;
+    } catch (e) {
+        console.error('加载统计失败:', e);
+    }
+}
+
+async function loadEbbinghausReminder() {
+    if (!isLoggedIn) {
+        document.getElementById('ebbinghausReminder')?.classList.remove('active');
+        return;
+    }
+    try {
+        const settings = await API.get('/api/user/ebbinghaus/settings');
+        document.getElementById('ebbinghausReminder')?.classList.toggle('active', settings.reminder_enabled === 1);
+    } catch (e) {
+        console.error('加载艾宾浩斯设置失败:', e);
+    }
+}
+
+async function toggleEbbinghausReminder() {
+    if (!isLoggedIn) return;
+    const toggle = document.getElementById('ebbinghausReminder');
+    const enabled = toggle.classList.contains('active');
+    try {
+        await API.post('/api/user/ebbinghaus/settings', { reminder_enabled: !enabled });
+    } catch (e) {
+        console.error('保存艾宾浩斯设置失败:', e);
+    }
+}
+
+function goToTodayReview() {
+    switchMainModule('home');
+}
+
+function openReviewCalendar() {
+    alert('复习日历功能即将上线');
+}
+
+function saveStudyGoals() {
+    const wordGoal = document.getElementById('dailyWordGoal')?.value;
+    const questionGoal = document.getElementById('dailyQuestionGoal')?.value;
+    localStorage.setItem('dailyWordGoal', wordGoal);
+    localStorage.setItem('dailyQuestionGoal', questionGoal);
+    alert('学习目标已保存');
+}
+
+function handleImportFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    importFromFile(file);
+}
+
+async function importFromFile(file) {
+    if (!isLoggedIn) return alert('请先登录');
+    try {
+        const text = await file.text();
+        await API.post('/api/user/import', JSON.parse(text));
+        alert('导入成功');
+        event.target.value = '';
+    } catch (err) {
+        alert('导入失败: ' + err.message);
+    }
+}
+
+function handleImportWords(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    importWordsFromMd(file);
+}
+
+async function importWordsFromMd(file) {
+    if (!isLoggedIn || currentUser?.role !== 'admin') {
+        alert('只有管理员可以导入单词数据');
+        return;
+    }
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const resp = await fetch('/api/admin/import/words', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + API.token },
+            body: formData
+        });
+        const data = await resp.json();
+        alert(data.message || '导入成功');
+        event.target.value = '';
+    } catch (err) {
+        alert('导入失败: ' + err.message);
+    }
+}
+
+function handleImportKnowledge(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    importKnowledgeFromMd(file);
+}
+
+async function importKnowledgeFromMd(file) {
+    if (!isLoggedIn || currentUser?.role !== 'admin') {
+        alert('只有管理员可以导入知识点数据');
+        return;
+    }
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const resp = await fetch('/api/admin/import/knowledge', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + API.token },
+            body: formData
+        });
+        const data = await resp.json();
+        alert(data.message || '导入成功');
+        event.target.value = '';
+    } catch (err) {
+        alert('导入失败: ' + err.message);
+    }
+}
+
+async function exportAllData() {
+    if (!isLoggedIn || currentUser?.role !== 'admin') {
+        alert('只有管理员可以导出全站数据');
+        return;
+    }
+    try {
+        const resp = await fetch('/api/admin/export/all', {
+            headers: { 'Authorization': 'Bearer ' + API.token }
+        });
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `backup-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    } catch (err) {
+        alert('备份失败: ' + err.message);
+    }
+}
+
+async function checkSystemStatus() {
+    try {
+        const resp = await fetch('/api/health');
+        const data = await resp.json();
+        alert('系统状态: ' + data.status + '\n' + data.message);
+    } catch (err) {
+        alert('检查失败: ' + err.message);
+    }
+}
+
+function showUserStats() {
+    alert('详细统计功能即将上线');
+}
 
 // ===== 模块切换 =====
 function switchMainModule(module) {
