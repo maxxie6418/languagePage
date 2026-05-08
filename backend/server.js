@@ -48,7 +48,13 @@ app.use((req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`服务器运行在 http://localhost:${PORT}`);
-    console.log(`访问文档: http://localhost:${PORT}`);
-});
+// 只在非 Vercel 环境下启动本地服务器
+if (process.env.VERCEL !== '1') {
+    app.listen(PORT, () => {
+        console.log(`服务器运行在 http://localhost:${PORT}`);
+        console.log(`访问文档: http://localhost:${PORT}`);
+    });
+}
+
+// 导出 app 供 Vercel Serverless 使用
+module.exports = app;

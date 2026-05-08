@@ -1,14 +1,12 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+const { Pool } = require('pg');
 
-const dbPath = path.join(__dirname, '../../data/learning.db');
-
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('数据库连接失败:', err.message);
-    } else {
-        console.log('数据库连接成功');
-    }
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-module.exports = db;
+pool.on('error', (err) => {
+  console.error('数据库连接池错误:', err.message);
+});
+
+module.exports = pool;
