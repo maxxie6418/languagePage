@@ -698,10 +698,28 @@
             transition: all 0.15s; opacity: 0.35;
         }
         .status-dot-btn:hover { opacity: 0.7; transform: scale(1.15); }
-        .status-dot-btn.s-unlearned { background: var(--text-muted); }
-        .status-dot-btn.s-learning { background: var(--warning); }
-        .status-dot-btn.s-mastered { background: var(--success); }
+        .status-dot-btn.s-unlearned { background: #8b949e; }
+        .status-dot-btn.s-learning { background: #d4a24e; }
+        .status-dot-btn.s-mastered { background: #5daa5e; }
         .status-dot-btn.active { opacity: 1; }
+
+        /* 筛选胶囊 - 多选按钮 */
+        .filter-capsule {
+            display: inline-flex; align-items: center; gap: 2px;
+            background: var(--bg-base); padding: 3px 5px;
+            border-radius: 10px; border: 1px solid var(--border);
+        }
+        .filter-dot-btn {
+            padding: 4px 10px; border-radius: 8px; border: none;
+            font-size: 11px; font-weight: 500; cursor: pointer;
+            background: transparent; color: var(--text-muted);
+            transition: all 0.15s;
+        }
+        .filter-dot-btn:hover { color: var(--text-secondary); background: var(--bg-hover); }
+        .filter-dot-btn.active { color: var(--text-primary); background: var(--bg-hover); }
+        .filter-dot-btn.s-unlearned.active { color: var(--text-secondary); }
+        .filter-dot-btn.s-learning.active { color: var(--warning); background: var(--warning-dim); }
+        .filter-dot-btn.s-mastered.active { color: var(--success); background: var(--success-dim); }
 
         .action-btns { display: flex; gap: 6px; justify-content: flex-end; }
         .action-btn {
@@ -1448,15 +1466,15 @@
                 <div id="basic-words">
                     <div class="toolbar">
                         <div class="toolbar-group">
-                            <button class="toolbar-btn active" onclick="setWordView('list')" id="btn-list">列表</button>
-                            <button class="toolbar-btn" onclick="setWordView('card')" id="btn-card">卡片</button>
+                            <button class="toolbar-btn" onclick="setWordView('list')" id="btn-list">列表</button>
+                            <button class="toolbar-btn active" onclick="setWordView('card')" id="btn-card">卡片</button>
                         </div>
-                        <select class="filter-select" onchange="filterWords(this.value)">
-                            <option value="all">全部</option>
-                            <option value="unmastered">未掌握</option>
-                            <option value="learning">记忆中</option>
-                            <option value="mastered">已掌握</option>
-                        </select>
+                        <div class="filter-capsule" id="filterCapsule">
+                            <button class="filter-dot-btn active" data-status="all" onclick="toggleFilter(this,'all')">全部</button>
+                            <button class="filter-dot-btn s-unlearned" data-status="unmastered" onclick="toggleFilter(this,'unmastered')">未掌握</button>
+                            <button class="filter-dot-btn s-learning" data-status="learning" onclick="toggleFilter(this,'learning')">记忆中</button>
+                            <button class="filter-dot-btn s-mastered" data-status="mastered" onclick="toggleFilter(this,'mastered')">已掌握</button>
+                        </div>
                         <button class="toolbar-btn" onclick="toggleDetectMode()" id="btn-detect">🔍 单词检测</button>
                         <button class="toolbar-btn" onclick="toggleBatchMode()" id="btn-batch">☑️ 批量选择</button>
                     </div>
@@ -1485,7 +1503,7 @@
                         </div>
                     </div>
 
-                    <div id="wordCardView" style="display:none">
+                    <div id="wordCardView">
                         <div class="word-card-grid" id="wordCardGrid"></div>
                     </div>
                 </div>
@@ -2941,7 +2959,7 @@ let isLoggedIn = !!API.token;
 let currentUser = null;
 let wordsCache = [];
 let wordStatusMap = {};
-let currentFilter = 'all';
+let currentFilter = new Set(['all']);
 let batchMode = false;
 let selectedWords = new Set();
 let detectMode = false;
@@ -3022,7 +3040,7 @@ function updateAuthUI() {
 async function loadWords() {
     try {
         const params = new URLSearchParams();
-        if (currentFilter && currentFilter !== 'all') params.set('category', currentFilter);
+        if (currentFilter && !currentFilter.has('all')) params.set('category', [...currentFilter].join(','));
         const data = await API.get('/api/words?' + params.toString());
         wordsCache = data.words || [];
         if (isLoggedIn) {
@@ -3071,7 +3089,7 @@ function renderWords() {
     const tbody = document.getElementById('wordTableBody');
     const grid = document.getElementById('wordCardGrid');
     const hideEn = document.getElementById('hideEn')?.checked;
-    const filtered = currentFilter === 'all' ? wordsCache : wordsCache.filter(w => w.status === currentFilter);
+    const filtered = currentFilter.has('all') ? wordsCache : wordsCache.filter(w => currentFilter.has(w.status));
 
     const wordToRow = (w) => {
         return `<tr onclick="toggleExpand(${w.id})">
@@ -3099,7 +3117,6 @@ function renderWords() {
                     <div class="detail-section"><div class="detail-label">释义</div><div class="detail-text">${w.meaning || ''}</div></div>
                     ${w.example ? `<div class="detail-section"><div class="detail-label">例句</div><div class="detail-text">${w.example}</div></div>` : ''}
                     <div class="detail-actions">
-                        <button class="btn btn-text" onclick="event.stopPropagation(); cycleStatus(${w.id})">🔄 切换状态</button>
                         <button class="btn btn-text" onclick="event.stopPropagation(); openAiWord('${w.word}')">🤖 AI深度解析</button>
                     </div>
                 </div>
@@ -3133,7 +3150,6 @@ function renderWords() {
                     <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:6px;font-family:Georgia,serif;">${w.phonetic || ''}</div>
                     <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">${w.meaning || ''}</div>
                     ${w.example ? `<div style="font-size:11px;color:var(--text-tertiary);">${w.example}</div>` : ''}
-                    <button class="btn btn-text btn-sm" onclick="event.stopPropagation(); cycleStatus(${w.id})">🔄 切换状态</button>
                 </div>
             </div>`;
         }).join('');
@@ -3162,7 +3178,7 @@ function toggleSelect(id) {
 }
 
 function toggleCheckAll() {
-    const ids = wordsCache.filter(w => currentFilter === 'all' || w.status === currentFilter).map(w => w.id);
+    const ids = wordsCache.filter(w => currentFilter.has('all') || currentFilter.has(w.status)).map(w => w.id);
     if (selectedWords.size === ids.length) { selectedWords.clear(); }
     else { ids.forEach(id => selectedWords.add(id)); }
     document.getElementById('batchCount').textContent = selectedWords.size;
@@ -3178,7 +3194,32 @@ function cycleStatus(id) {
     saveWordStatus(id, next);
 }
 
-function filterWords(val) { currentFilter = val; renderWords(); }
+function toggleFilter(btn, status) {
+    const capsule = document.getElementById('filterCapsule');
+    const btns = capsule.querySelectorAll('.filter-dot-btn');
+    if (status === 'all') {
+        currentFilter = new Set(['all']);
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    } else {
+        currentFilter.delete('all');
+        btns[0].classList.remove('active');
+        if (currentFilter.has(status)) {
+            currentFilter.delete(status);
+            btn.classList.remove('active');
+            if (currentFilter.size === 0) {
+                currentFilter = new Set(['all']);
+                btns[0].classList.add('active');
+            }
+        } else {
+            currentFilter.add(status);
+            btn.classList.add('active');
+        }
+    }
+    renderWords();
+}
+
+function filterWords(val) { currentFilter = new Set([val]); renderWords(); }
 
 function setWordView(view) {
     document.getElementById('wordListView').style.display = view === 'list' ? 'block' : 'none';
@@ -3614,7 +3655,20 @@ async function loadDashboard() {
             if (el) el.style.width = Math.min(v, 100) + '%';
             if (valEl) valEl.textContent = Math.min(v, 100) + '%';
         });
-    } catch {}
+    } catch {
+        // 未登录或后端未启动时显示默认数据
+        document.getElementById('statTotalWords').textContent = '2000';
+        document.getElementById('statMastered').textContent = '0';
+        document.getElementById('statLearning').textContent = '0';
+        document.getElementById('statRate').textContent = '0%';
+        const defaults = { Word: 0, Root: 0, Grammar: 0, Trans: 0, Essay: 0, Reading: 0 };
+        Object.entries(defaults).forEach(([d, v]) => {
+            const el = document.getElementById('radar' + d);
+            const valEl = document.getElementById('radar' + d + 'Val');
+            if (el) el.style.width = v + '%';
+            if (valEl) valEl.textContent = v + '%';
+        });
+    }
     const reviewCount = document.getElementById('reviewCount');
     if (isLoggedIn) {
         try {
