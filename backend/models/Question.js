@@ -1,38 +1,31 @@
 const db = require('../config/database');
 
 class Question {
-    static findByCategory(category, limit = 10) {
-        return new Promise((resolve, reject) => {
-            db.all(`SELECT * FROM questions WHERE category = ? ORDER BY RANDOM() LIMIT ?`,
-                [category, limit], (err, rows) => { err ? reject(err) : resolve(rows); });
-        });
+    static async findByCategory(category, limit = 10) {
+        const result = await db.query(`SELECT * FROM questions WHERE category = $1 ORDER BY RANDOM() LIMIT $2`,
+            [category, limit]);
+        return result.rows;
     }
 
-    static findById(id) {
-        return new Promise((resolve, reject) => {
-            db.get('SELECT * FROM questions WHERE id = ?', [id], (err, row) => {
-                err ? reject(err) : resolve(row);
-            });
-        });
+    static async findById(id) {
+        const result = await db.query('SELECT * FROM questions WHERE id = $1', [id]);
+        return result.rows[0];
     }
 
-    static randomByCategory(category, limit = 5) {
-        return new Promise((resolve, reject) => {
-            let sql = 'SELECT * FROM questions';
-            const params = [];
-            if (category) { sql += ' WHERE category = ?'; params.push(category); }
-            sql += ' ORDER BY RANDOM() LIMIT ?';
-            params.push(limit);
-            db.all(sql, params, (err, rows) => { err ? reject(err) : resolve(rows); });
-        });
+    static async randomByCategory(category, limit = 5) {
+        let sql = 'SELECT * FROM questions';
+        const params = [];
+        let idx = 1;
+        if (category) { sql += ` WHERE category = $${idx++}`; params.push(category); }
+        sql += ` ORDER BY RANDOM() LIMIT $${idx++}`;
+        params.push(limit);
+        const result = await db.query(sql, params);
+        return result.rows;
     }
 
-    static getCategories() {
-        return new Promise((resolve, reject) => {
-            db.all('SELECT DISTINCT category FROM questions ORDER BY category', [], (err, rows) => {
-                err ? reject(err) : resolve(rows.map(r => r.category));
-            });
-        });
+    static async getCategories() {
+        const result = await db.query('SELECT DISTINCT category FROM questions ORDER BY category', []);
+        return result.rows.map(r => r.category);
     }
 }
 
