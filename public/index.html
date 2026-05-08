@@ -665,10 +665,9 @@
         .word-table tbody tr:hover td:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
         .word-table tbody tr:hover td:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
         .col-check { width: 40px; }
-        .col-word { width: 14%; font-weight: 600; color: var(--text-primary); font-size: 14px; }
-        .col-phonetic { width: 16%; color: var(--text-tertiary); font-family: Georgia, serif; font-size: 13px; }
-        .col-meaning { width: 32%; color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
-        .col-status { width: 14%; }
+        .col-word { width: 16%; font-weight: 600; color: var(--text-primary); font-size: 14px; }
+        .col-meaning { color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
+        .col-status { width: 80px; text-align: center; }
         .col-action { width: auto; text-align: right; }
 
         .status-badge {
@@ -685,6 +684,24 @@
         .status-unmastered .status-dot { background: var(--text-muted); }
         .status-learning .status-dot { background: var(--warning); }
         .status-mastered .status-dot { background: var(--success); }
+
+        /* 胶囊式三圆点熟练度 */
+        .status-capsule {
+            display: inline-flex; align-items: center; gap: 3px;
+            background: var(--bg-base); padding: 3px 7px;
+            border-radius: 10px; border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .status-dot-btn {
+            width: 10px; height: 10px; border-radius: 50%;
+            border: none; padding: 0; cursor: pointer;
+            transition: all 0.15s; opacity: 0.35;
+        }
+        .status-dot-btn:hover { opacity: 0.7; transform: scale(1.15); }
+        .status-dot-btn.s-unlearned { background: var(--text-muted); }
+        .status-dot-btn.s-learning { background: var(--warning); }
+        .status-dot-btn.s-mastered { background: var(--success); }
+        .status-dot-btn.active { opacity: 1; }
 
         .action-btns { display: flex; gap: 6px; justify-content: flex-end; }
         .action-btn {
@@ -745,7 +762,6 @@
             display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 6px;
         }
         .word-card-title { font-size: 16px; font-weight: 700; color: var(--text-primary); }
-        .word-card-phonetic { font-size: 12px; color: var(--text-tertiary); font-family: Georgia, serif; margin-bottom: 6px; }
         .word-card-meaning {
             font-size: 12px; color: var(--text-secondary); line-height: 1.5;
             margin-bottom: 10px; display: -webkit-box;
@@ -3058,14 +3074,17 @@ function renderWords() {
     const filtered = currentFilter === 'all' ? wordsCache : wordsCache.filter(w => w.status === currentFilter);
 
     const wordToRow = (w) => {
-        const sc = 'status-' + w.status;
-        const st = { unmastered: '未掌握', learning: '记忆中', mastered: '已掌握' }[w.status] || '未掌握';
         return `<tr onclick="toggleExpand(${w.id})">
             <td><input type="checkbox" ${batchMode ? '' : 'style="display:none"'} onchange="toggleSelect(${w.id})" ${selectedWords.has(w.id) ? 'checked' : ''}></td>
             <td class="col-word">${w.word}</td>
-            <td class="col-phonetic">${w.phonetic || ''}</td>
-            <td class="col-meaning">${hideEn ? '<span class="hidden-mask" onclick="event.stopPropagation(); showMeaning(this, \'' + w.meaning.replace(/'/g, "\\'") + '\')">点击显示</span>' : (w.meaning || '')}</td>
-            <td class="col-status"><button class="status-badge ${sc}" onclick="event.stopPropagation(); cycleStatus(${w.id})"><span class="status-dot"></span>${st}</button></td>
+            <td class="col-meaning" style="width:auto;">${hideEn ? '<span class="hidden-mask" onclick="event.stopPropagation(); showMeaning(this, \'' + w.meaning.replace(/'/g, "\\'") + '\')">点击显示</span>' : (w.meaning || '')}</td>
+            <td class="col-status">
+                <div class="status-capsule" onclick="event.stopPropagation()">
+                    <button class="status-dot-btn s-unlearned ${w.status==='unmastered'?'active':''}" onclick="event.stopPropagation(); saveWordStatus(${w.id},'unmastered')" aria-label="未掌握"></button>
+                    <button class="status-dot-btn s-learning ${w.status==='learning'?'active':''}" onclick="event.stopPropagation(); saveWordStatus(${w.id},'learning')" aria-label="记忆中"></button>
+                    <button class="status-dot-btn s-mastered ${w.status==='mastered'?'active':''}" onclick="event.stopPropagation(); saveWordStatus(${w.id},'mastered')" aria-label="已掌握"></button>
+                </div>
+            </td>
             <td class="col-action">
                 <div class="action-btns">
                     <button class="action-btn" onclick="event.stopPropagation(); playSound('${w.word}')">🔊</button>
@@ -3074,8 +3093,9 @@ function renderWords() {
             </td>
         </tr>
         <tr class="word-detail-row" id="detail-${w.id}">
-            <td colspan="6">
+            <td colspan="5">
                 <div class="word-detail-inner ${w.status}">
+                    <div class="detail-section"><div class="detail-label">音标</div><div class="detail-text">${w.phonetic || ''}</div></div>
                     <div class="detail-section"><div class="detail-label">释义</div><div class="detail-text">${w.meaning || ''}</div></div>
                     ${w.example ? `<div class="detail-section"><div class="detail-label">例句</div><div class="detail-text">${w.example}</div></div>` : ''}
                     <div class="detail-actions">
@@ -3092,23 +3112,25 @@ function renderWords() {
     }
     if (grid) {
         grid.innerHTML = filtered.map(w => {
-            const sc = 'status-' + w.status;
-            const st = { unmastered: '未掌握', learning: '记忆中', mastered: '已掌握' }[w.status] || '未掌握';
             return `<div class="word-card" onclick="toggleCardExpand(${w.id})">
                 <div class="word-card-header">
                     <div class="word-card-title">${w.word}</div>
                     ${batchMode ? `<input type="checkbox" onchange="event.stopPropagation(); toggleSelect(${w.id})">` : ''}
                 </div>
-                <div class="word-card-phonetic">${w.phonetic || ''}</div>
                 <div class="word-card-meaning">${hideEn ? '<span class="hidden-mask" onclick="event.stopPropagation(); showMeaning(this, \'' + (w.meaning || '').replace(/'/g, "\\'") + '\')">点击显示</span>' : (w.meaning || '')}</div>
                 <div class="word-card-footer">
-                    <button class="status-badge ${sc}" onclick="event.stopPropagation(); cycleStatus(${w.id})"><span class="status-dot"></span>${st}</button>
+                    <div class="status-capsule" onclick="event.stopPropagation()">
+                        <button class="status-dot-btn s-unlearned ${w.status==='unmastered'?'active':''}" onclick="event.stopPropagation(); saveWordStatus(${w.id},'unmastered')" aria-label="未掌握"></button>
+                        <button class="status-dot-btn s-learning ${w.status==='learning'?'active':''}" onclick="event.stopPropagation(); saveWordStatus(${w.id},'learning')" aria-label="记忆中"></button>
+                        <button class="status-dot-btn s-mastered ${w.status==='mastered'?'active':''}" onclick="event.stopPropagation(); saveWordStatus(${w.id},'mastered')" aria-label="已掌握"></button>
+                    </div>
                     <div class="word-card-actions">
                         <button class="action-btn" onclick="event.stopPropagation(); playSound('${w.word}')">🔊</button>
                         <button class="action-btn" onclick="event.stopPropagation(); openAiWord('${w.word}')">🤖</button>
                     </div>
                 </div>
                 <div class="word-card-detail">
+                    <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:6px;font-family:Georgia,serif;">${w.phonetic || ''}</div>
                     <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">${w.meaning || ''}</div>
                     ${w.example ? `<div style="font-size:11px;color:var(--text-tertiary);">${w.example}</div>` : ''}
                     <button class="btn btn-text btn-sm" onclick="event.stopPropagation(); cycleStatus(${w.id})">🔄 切换状态</button>
