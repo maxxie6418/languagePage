@@ -31,12 +31,12 @@ languagePage/
 
 ## 环境变量
 
-| 变量名 | 说明 | 示例 |
+| 变量名 | 必填 | 说明 |
 |--------|------|------|
-| `DATABASE_URL` | Supabase PostgreSQL 连接字符串 | `postgresql://postgres.xxx:password@aws-0-xxx.pooler.supabase.com:6543/postgres` |
-| `JWT_SECRET` | JWT 签名密钥 | 随机字符串 |
-| `DEEPSEEK_API_KEY` | DeepSeek API 密钥 | `sk-xxx` |
-| `DEEPSEEK_BASE_URL` | DeepSeek API 地址 | `https://api.deepseek.com` |
+| `DATABASE_URL` | ✅ | Supabase PostgreSQL 连接字符串 |
+| `JWT_SECRET` | ✅ | JWT 签名密钥 |
+| `DEEPSEEK_API_KEY` | ❌ | DeepSeek API 密钥（AI功能需要） |
+| `DEEPSEEK_BASE_URL` | ❌ | DeepSeek API 地址（默认 `https://api.deepseek.com`） |
 
 ## 本地开发
 
@@ -54,23 +54,31 @@ npm run dev
 
 服务将在 `http://localhost:3000` 启动。
 
+> ⚠️ **注意**：本地开发默认连接 Supabase 生产数据库。如需隔离测试数据，建议创建单独的 Supabase 开发项目。
+
 ## 部署到 Vercel
 
+### 方式一：GitHub 自动部署（推荐）
+
+1. 将项目推送到 GitHub
+2. 登录 [vercel.com](https://vercel.com)，用 GitHub 账号
+3. 点击 **Add New... → Project**，导入 GitHub 仓库
+4. 配置环境变量后点击 **Deploy**
+
+后续每次 push 到 GitHub，Vercel 会自动重新部署。
+
+### 方式二：CLI 部署
+
 ```bash
-# 1. 安装 Vercel CLI
 npm i -g vercel
-
-# 2. 登录
 vercel login
-
-# 3. 部署
 vercel --prod
 ```
 
-在 Vercel Dashboard 中配置环境变量：
+在 Vercel Dashboard → Settings → Environment Variables 中配置：
 - `DATABASE_URL`
 - `JWT_SECRET`
-- `DEEPSEEK_API_KEY`
+- `DEEPSEEK_API_KEY`（可选）
 - `DEEPSEEK_BASE_URL`
 
 ## 功能特性
@@ -89,6 +97,7 @@ vercel --prod
 - [产品需求文档](docs/英语学习站_PRD_v1.1.md)
 - [设计规范文档](docs/英语学习站_设计规范_v1.0.md)
 - [Vercel 部署改造计划](docs/VERCEL_DEPLOY_PLAN.md)
+- [项目开发指南](AGENTS.md)
 
 ## License
 
