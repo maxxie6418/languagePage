@@ -1,13 +1,14 @@
 # 英语学习站
 
-一个面向英语基础学习的本地化学习管理平台，支持多用户进度隔离、艾宾浩斯记忆法、AI智能答疑等功能。
+一个面向英语基础学习的在线学习管理平台，支持多用户进度隔离、艾宾浩斯记忆法、AI智能答疑等功能。
 
 ## 技术栈
 
-- **后端**: Node.js + Express
-- **数据库**: SQLite3
+- **后端**: Node.js + Express（Vercel Serverless）
+- **数据库**: PostgreSQL（Supabase）
 - **前端**: 原生 HTML/CSS/JavaScript
-- **AI服务**: DeepSeek API (后端代理)
+- **AI服务**: DeepSeek API（后端代理）
+- **部署**: Vercel + Supabase
 
 ## 项目结构
 
@@ -16,120 +17,78 @@ languagePage/
 ├── backend/              # 后端代码
 │   ├── controllers/      # 控制器
 │   ├── middleware/       # 中间件
-│   ├── models/           # 数据模型
+│   ├── models/           # 数据模型（PostgreSQL）
 │   ├── routes/           # 路由
-│   ├── config/           # 配置
-│   └── server.js         # 服务器入口
-├── frontend/             # 前端资源
-│   ├── css/
-│   ├── js/
-│   └── assets/
+│   ├── config/           # 配置（pg 连接池）
+│   └── server.js         # 服务器入口（Vercel Serverless 导出）
 ├── public/               # 静态文件
 │   └── index.html        # 主页
-├── database/             # 数据库相关
-│   ├── migrations/       # 数据库迁移
-│   └── seeds/            # 种子数据
 ├── docs/                 # 文档
-├── data/                 # 数据库文件目录 (git忽略)
-├── 启动.bat               # Windows - 一键启动菜单
+├── vercel.json           # Vercel 部署配置
 ├── package.json
 └── README.md
 ```
 
-## 快速开始
+## 环境变量
 
-### Windows 用户 (推荐) - 一键启动
+| 变量名 | 说明 | 示例 |
+|--------|------|------|
+| `DATABASE_URL` | Supabase PostgreSQL 连接字符串 | `postgresql://postgres.xxx:password@aws-0-xxx.pooler.supabase.com:6543/postgres` |
+| `JWT_SECRET` | JWT 签名密钥 | 随机字符串 |
+| `DEEPSEEK_API_KEY` | DeepSeek API 密钥 | `sk-xxx` |
+| `DEEPSEEK_BASE_URL` | DeepSeek API 地址 | `https://api.deepseek.com` |
 
-双击运行 `启动.bat`，会显示菜单：
-
-```
-============================================
-     英语学习站 - 启动菜单
-============================================
-
-   [1] 初始化项目（首次使用）
-   [2] 启动开发服务器
-   [3] 启动生产服务器
-   [4] 初始化数据库
-   [5] 导入示例数据
-   [0] 退出
-```
-
-**首次使用**：选择 `1`，自动完成所有初始化
-**日常开发**：选择 `2`，启动开发服务器
-
----
-
-### 手动操作（所有平台）
-
-如果您想手动执行每个步骤：
-
-#### 1. 安装依赖
+## 本地开发
 
 ```bash
+# 1. 安装依赖
 npm install
-```
 
-#### 2. 初始化数据库
-
-```bash
-npm run init-db
-```
-
-#### 3. 导入种子数据
-
-```bash
-npm run seed-db
-```
-
-#### 4. 配置环境变量
-
-```bash
+# 2. 配置环境变量
 cp .env.example .env
-# 编辑 .env 文件，填入必要的配置
-```
+# 编辑 .env 填入 DATABASE_URL 等配置
 
-#### 5. 启动服务
-
-```bash
-# 开发模式（自动重启）
+# 3. 启动开发服务器
 npm run dev
-
-# 生产模式
-npm start
 ```
 
 服务将在 `http://localhost:3000` 启动。
+
+## 部署到 Vercel
+
+```bash
+# 1. 安装 Vercel CLI
+npm i -g vercel
+
+# 2. 登录
+vercel login
+
+# 3. 部署
+vercel --prod
+```
+
+在 Vercel Dashboard 中配置环境变量：
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `DEEPSEEK_API_KEY`
+- `DEEPSEEK_BASE_URL`
 
 ## 功能特性
 
 - ✅ 用户系统（注册/登录，JWT认证）
 - ✅ 单词学习（列表/卡片双视图，检测模式）
-- 🚧 词根词缀学习
-- 🚧 语法体系
-- 🚧 艾宾浩斯记忆法
-- 🚧 真题解析
-- 🚧 模拟测验
-- 🚧 AI智能答疑
-- 🚧 数据导入导出
-
-## 开发进度
-
-- [x] 项目框架搭建
-- [x] 数据库设计与初始化
-- [x] 用户认证系统
-- [ ] 单词模块
-- [ ] 基础学习模块
-- [ ] 艾宾浩斯记忆系统
-- [ ] 真题模块
-- [ ] 测验模块
-- [ ] AI集成
-- [ ] 管理员功能
+- ✅ 知识点学习（语法体系）
+- ✅ 艾宾浩斯记忆法（自动复习提醒）
+- ✅ 真题解析（阅读理解、完形填空等）
+- ✅ 模拟测验（随机出题、错题本）
+- ✅ AI智能答疑（DeepSeek）
+- ✅ 数据导入导出
 
 ## 相关文档
 
 - [产品需求文档](docs/英语学习站_PRD_v1.1.md)
 - [设计规范文档](docs/英语学习站_设计规范_v1.0.md)
+- [Vercel 部署改造计划](docs/VERCEL_DEPLOY_PLAN.md)
 
 ## License
 

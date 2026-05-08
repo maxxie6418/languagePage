@@ -11,6 +11,9 @@ data/*.db
 data/*.sqlite
 data/*.sqlite3
 
+# Vercel
+.vercel/
+
 # Logs
 logs/
 *.log
