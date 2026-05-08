@@ -28,7 +28,7 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/admin', adminRoutes);
 
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: '考研英语学习站服务器运行中' });
+    res.json({ status: 'ok', message: '英语学习站服务器运行中' });
 });
 
 app.get('/', (req, res) => {

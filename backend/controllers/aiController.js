@@ -50,7 +50,7 @@ exports.chat = async (req, res) => {
         if (!config.is_enabled) return res.status(403).json({ error: 'AI 功能未启用' });
         const { message, systemPrompt } = req.body;
         if (!message) return res.status(400).json({ error: '消息不能为空' });
-        const reply = await callDeepSeek(config, systemPrompt || '你是考研英语学习助手，帮助用户学习英语。', message);
+        const reply = await callDeepSeek(config, systemPrompt || '你是英语学习助手，帮助用户学习英语。', message);
         res.json({ reply });
     } catch (error) {
         console.error('AI 调用错误:', error);
@@ -80,7 +80,7 @@ exports.word = async (req, res) => {
         const { word } = req.body;
         if (!word) return res.status(400).json({ error: '请输入单词' });
         const reply = await callDeepSeek(config,
-            '你是一个英语词汇专家。请详细解析单词，包括：词根词缀拆解、核心释义、考研常见搭配、2个真题风格例句。',
+            '你是一个英语词汇专家。请详细解析单词，包括：词根词缀拆解、核心释义、常见搭配、2个真题风格例句。',
             word);
         res.json({ reply });
     } catch (error) {
@@ -94,8 +94,8 @@ exports.essay = async (req, res) => {
         if (!config.is_enabled) return res.status(403).json({ error: 'AI 功能未启用' });
         const { essay, title } = req.body;
         if (!essay) return res.status(400).json({ error: '请输入作文内容' });
-        const prompt = `请按考研英语作文评分标准（内容、结构、语言、字数）对以下作文打分并给出修改建议。\n标题：${title || '未命名'}\n作文：${essay}`;
-        const reply = await callDeepSeek(config, '你是一个考研英语作文评分专家。', prompt);
+        const prompt = `请按英语作文评分标准（内容、结构、语言、字数）对以下作文打分并给出修改建议。\n标题：${title || '未命名'}\n作文：${essay}`;
+        const reply = await callDeepSeek(config, '你是一个英语作文评分专家。', prompt);
         res.json({ reply });
     } catch (error) {
         res.status(500).json({ error: error.message || '作文批改服务暂不可用' });

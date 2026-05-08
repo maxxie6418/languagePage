@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语学习站 - UI增强版</title>
+    <style>
+        /* ===== 主题系统 ===== */
+        :root {
+            /* 默认深色主题 */
+            --bg-base: #0d1117;
+            --bg-elevated: #161b22;
+            --bg-card: #1c2128;
+            --bg-hover: #21262d;
+            --bg-active: #2d333b;
+            --border: #30363d;
+            --border-light: #3d444d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --text-tertiary: #6e7681;
+            --text-muted: #484f58;
+            --primary: #6b8cae;
+            --primary-hover: #7d9ebf;
+            --primary-dim: rgba(107, 140, 174, 0.12);
+            --success: #7aa872;
+            --success-dim: rgba(122, 168, 114, 0.12);
+            --warning: #b8a16e;
+            --warning-dim: rgba(184, 161, 110, 0.12);
+            --error: #b87a7a;
+            --error-dim: rgba(184, 122, 122, 0.12);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --sidebar-width: 240px;
+            --header-height: 60px;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.25);
+            
+            /* 标签颜色 */
+            --tag-example: #3b82f6;
+            --tag-tip: #10b981;
+            --tag-collocation: #f59e0b;
+            --tag-root: #8b5cf6;
+            --tag-error: #ef4444;
+            --tag-note: #6b7280;
+        }
+
+        /* 白色明亮主题 */
+        [data-theme="light"] {
+            --bg-base: #f6f8fa;
+            --bg-elevated: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hover: #f3f4f6;
+            --bg-active: #e5e7eb;
+            --border: #e1e4e8;
+            --border-light: #d1d5db;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --text-tertiary: #6b7280;
+            --text-muted: #9ca3af;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --primary-dim: rgba(59, 130, 246, 0.08);
+            --success: #10b981;
+            --success-dim: rgba(16, 185, 129, 0.08);
+            --warning: #f59e0b;
+            --warning-dim: rgba(245, 158, 11, 0.08);
+            --error: #ef4444;
+            --error-dim: rgba(239, 68, 68, 0.08);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        /* ===== 主布局 ===== */
+        .app-layout { display: flex; min-height: 100vh; background: var(--bg-base); }
+
+        /* 左侧边栏 */
+        .sidebar {
+            width: var(--sidebar-width); background: var(--bg-elevated);
+            border-right: 1px solid var(--border); display: flex; flex-direction: column;
+            position: fixed; height: 100vh; z-index: 100;
+            box-shadow: var(--shadow-md);
+        }
+        .sidebar-header {
+            padding: 20px 20px 16px; display: flex; align-items: center; gap: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo-icon {
+            width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: white;
+        }
+        .logo-text { font-size: 17px; font-weight: 700; color: var(--text-primary); }
+
+        .nav-section { padding: 12px 8px; }
+        .nav-section-title {
+            font-size: 10px; font-weight: 600; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1px;
+            padding: 8px 12px; margin-bottom: 4px;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: var(--radius-sm);
+            cursor: pointer; color: var(--text-secondary); font-size: 14px;
+            transition: all 0.15s ease; margin-bottom: 2px;
+        }
+        .nav-item:hover { background: var(--bg-hover); color: var(--text-primary); transform: translateX(4px); }
+        .nav-item.active {
+            background: var(--primary-dim); color: var(--primary);
+            box-shadow: inset 0 0 0 1px var(--primary);
+        }
+        .nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; opacity: 0.7; }
+
+        /* 主内容区 */
+        .main-content {
+            margin-left: var(--sidebar-width); flex: 1; min-height: 100vh;
+            display: flex; flex-direction: column;
+        }
+
+        /* 顶部栏 */
+        .top-header {
+            background: var(--bg-elevated); border-bottom: 1px solid var(--border);
+            padding: 0 28px; height: var(--header-height);
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .header-nav { display: flex; align-items: center; gap: 4px; }
+        .header-nav-item {
+            padding: 10px 24px; border-radius: var(--radius-sm);
+            font-size: 14px; color: var(--text-secondary);
+            cursor: pointer; transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        .header-nav-item:hover { color: var(--text-primary); background: var(--bg-hover); }
+        .header-nav-item.active {
+            color: var(--primary); background: var(--primary-dim);
+            box-shadow: inset 0 0 0 1px var(--primary);
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 8px; }
+        .theme-switcher {
+            display: flex; align-items: center; gap: 6px;
+            background: var(--bg-hover); padding: 4px;
+            border-radius: 24px; border: 1px solid var(--border);
+        }
+        .theme-btn {
+            width: 32px; height: 32px; border-radius: 50%;
+            border: none; background: transparent; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+        .theme-btn:hover { color: var(--text-secondary); transform: scale(1.1); }
+        .theme-btn.active {
+            background: var(--primary); color: var(--bg-base);
+        }
+
+        .content-body { padding: 28px; max-width: 1500px; margin: 0 auto; width: 100%; }
+
+        /* ===== 页面切换 ===== */
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+
+        /* ===== 首页仪表盘 ===== */
+        .welcome-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 28px; flex-wrap: wrap; gap: 16px;
+        }
+        .welcome-text h2 {
+            font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .welcome-text p { font-size: 14px; color: var(--text-tertiary); }
+        .check-in-card {
+            display: flex; align-items: center; gap: 16px;
+            background: linear-gradient(135deg, var(--warning-dim) 0%, var(--bg-elevated) 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 16px 24px;
+        }
+        .check-in-info .check-in-days { font-size: 24px; font-weight: 700; color: var(--warning); }
+        .check-in-info .check-in-label { font-size: 12px; color: var(--text-muted); }
+
+        .stats-row {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 16px; margin-bottom: 28px;
+        }
+        .stat-card {
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 22px; transition: all 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 3px; background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 100%);
+            transform: scaleX(0); transition: transform 0.3s ease;
+        }
+        .stat-card:hover::before { transform: scaleX(1); }
+        .stat-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .stat-card-label {
+            font-size: 12px; color: var(--text-muted); margin-bottom: 10px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .stat-card-icon {
+            width: 32px; height: 32px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; background: var(--primary-dim); color: var(--primary);
+        }
+        .stat-card-value { font-size: 32px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .stat-card-sub { font-size: 12px; color: var(--text-muted); }
+
+        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+        .panel-card {
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 22px; margin-bottom: 20px;
+        }
+        .panel-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .panel-header h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .panel-more {
+            font-size: 12px; color: var(--primary); cursor: pointer;
+            display: flex; align-items: center; gap: 4px; font-weight: 500;
+        }
+        .panel-more:hover { color: var(--primary-hover); }
+
+        /* ===== 三状态按钮系统 ===== */
+        .status-tri-btns {
+            display: inline-flex;
+            gap: 4px;
+            background: var(--bg-base);
+            padding: 3px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .status-tri-btn {
+            padding: 5px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: transparent;
+            color: var(--text-muted);
+        }
+        .status-tri-btn:hover { transform: translateY(-1px); }
+        
+        .status-tri-btn.unmastered.active {
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+            box-shadow: inset 0 0 0 1px var(--border);
+        }
+        .status-tri-btn.learning.active {
+            background: var(--warning-dim);
+            color: var(--warning);
+            box-shadow: inset 0 0 0 1px var(--warning);
+        }
+        .status-tri-btn.mastered.active {
+            background: var(--success-dim);
+            color: var(--success);
+            box-shadow: inset 0 0 0 1px var(--success);
+        }
+        .status-tri-btn .status-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 2px solid var(--text-muted);
+            background: transparent;
+            transition: all 0.2s ease;
+        }
+        .status-tri-btn.unmastered.active .status-icon { border-color: var(--text-secondary); background: var(--text-secondary); }
+        .status-tri-btn.learning.active .status-icon { border-color: var(--warning); background: var(--warning); }
+        .status-tri-btn.mastered.active .status-icon { border-color: var(--success); background: var(--success); }
+
+        /* ===== 知识点深度探索标签 ===== */
+        .knowledge-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 12px 0;
+            padding: 10px 12px;
+            background: var(--bg-base);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .knowledge-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+        }
+        .knowledge-tag:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .knowledge-tag.active { color: white; }
+        
+        .knowledge-tag.example { border-color: var(--tag-example); color: var(--tag-example); }
+        .knowledge-tag.example.active { background: var(--tag-example); }
+        .knowledge-tag.tip { border-color: var(--tag-tip); color: var(--tag-tip); }
+        .knowledge-tag.tip.active { background: var(--tag-tip); }
+        .knowledge-tag.collocation { border-color: var(--tag-collocation); color: var(--tag-collocation); }
+        .knowledge-tag.collocation.active { background: var(--tag-collocation); }
+        .knowledge-tag.root { border-color: var(--tag-root); color: var(--tag-root); }
+        .knowledge-tag.root.active { background: var(--tag-root); }
+        .knowledge-tag.error { border-color: var(--tag-error); color: var(--tag-error); }
+        .knowledge-tag.error.active { background: var(--tag-error); }
+        
+        .knowledge-tag .tag-count {
+            background: rgba(255,255,255,0.2);
+            padding: 1px 5px;
+            border-radius: 8px;
+            font-size: 10px;
+        }
+
+        /* 标签内容展开区 */
+        .tag-content-panel {
+            display: none;
+            margin-top: 10px;
+            padding: 14px;
+            background: var(--bg-base);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            animation: slideDown 0.3s ease;
+        }
+        .tag-content-panel.active { display: block; }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .tag-content-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .tag-content-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tag-content-body { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+        .tag-content-item {
+            padding: 10px 12px;
+            background: var(--bg-hover);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+        }
+        .tag-content-item:last-child { margin-bottom: 0; }
+        .tag-content-item-en { color: var(--text-primary); font-weight: 500; margin-bottom: 3px; }
+        .tag-content-item-cn { color: var(--text-tertiary); font-size: 12px; }
+
+        /* ===== 关联推荐卡片 ===== */
+        .related-section { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+        .related-title {
+            font-size: 11px; font-weight: 600; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+        }
+        .related-cards { display: flex; flex-wrap: wrap; gap: 8px; }
+        .related-card {
+            display: inline-flex;
+            flex-direction: column;
+            padding: 10px 14px;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 110px;
+        }
+        .related-card:hover { border-color: var(--primary); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .related-card-word { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .related-card-meaning { font-size: 11px; color: var(--text-tertiary); margin-bottom: 6px; }
+        .related-card-status {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            width: fit-content;
+        }
+        .related-card-status.mastered { background: var(--success-dim); color: var(--success); }
+        .related-card-status.learning { background: var(--warning-dim); color: var(--warning); }
+        .related-card-status.unmastered { background: var(--bg-hover); color: var(--text-muted); }
+        .related-card-status.suggest { background: var(--primary-dim); color: var(--primary); }
+
+        /* ===== 首页推荐卡片 ===== */
+        .recommend-card-enhanced {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .recommend-card-enhanced:hover { border-color: var(--border-light); transform: translateY(-1px); }
+        .recommend-card-enhanced::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+        }
+        .recommend-card-enhanced.priority-high::before { background: var(--error); }
+        .recommend-card-enhanced.priority-medium::before { background: var(--warning); }
+        .recommend-card-enhanced.priority-low::before { background: var(--primary); }
+        
+        .recommend-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+        .recommend-icon-wrap {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; margin-right: 12px; flex-shrink: 0;
+        }
+        .recommend-icon-wrap.warning { background: var(--warning-dim); }
+        .recommend-icon-wrap.info { background: var(--primary-dim); }
+        .recommend-icon-wrap.success { background: var(--success-dim); }
+        .recommend-info { flex: 1; }
+        .recommend-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .recommend-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+        .recommend-priority { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+        .recommend-priority.high { background: var(--error-dim); color: var(--error); }
+        .recommend-priority.medium { background: var(--warning-dim); color: var(--warning); }
+        .recommend-priority.low { background: var(--primary-dim); color: var(--primary); }
+        
+        .recommend-progress { margin: 12px 0; }
+        .recommend-progress-bar { height: 4px; background: var(--bg-base); border-radius: 2px; overflow: hidden; margin-bottom: 6px; }
+        .recommend-progress-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+        .recommend-progress-text { font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; }
+        .recommend-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+        /* ===== 艾宾浩斯复习卡片 ===== */
+        .ebbinghaus-cards { display: flex; flex-wrap: wrap; gap: 10px; }
+        .ebbinghaus-card {
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            min-width: 120px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .ebbinghaus-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .ebbinghaus-card-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .ebbinghaus-card-stage { font-size: 10px; color: var(--text-muted); margin-bottom: 8px; }
+        .ebbinghaus-card-btn { width: 100%; padding: 5px; font-size: 11px; }
+
+        /* ===== 单词卡片增强 ===== */
+        .word-card-enhanced {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+        .word-card-enhanced:hover { border-color: var(--border-light); }
+        .word-basic { margin-bottom: 12px; }
+        .word-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+        .word-title { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .word-phonetic { font-size: 13px; color: var(--text-tertiary); font-family: Georgia, serif; }
+        .word-meaning { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* ===== 按钮 ===== */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            padding: 8px 16px; border: 1px solid transparent; border-radius: var(--radius-sm);
+            font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+            white-space: nowrap; background: none; color: var(--text-primary);
+        }
+        .btn-primary { background: var(--primary); color: #0d1117; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-ghost { border-color: var(--border); color: var(--text-secondary); }
+        .btn-ghost:hover { border-color: var(--border-light); color: var(--text-primary); background: var(--bg-hover); }
+        .btn-sm { padding: 5px 12px; font-size: 12px; }
+
+        /* ===== 最近记录 ===== */
+        .record-list { display: flex; flex-direction: column; gap: 8px; }
+        .record-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 10px; border-radius: var(--radius-sm);
+            background: var(--bg-base); border: 1px solid var(--border);
+        }
+        .record-icon {
+            width: 28px; height: 28px; border-radius: 6px;
+            background: var(--primary-dim); color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 600; flex-shrink: 0;
+        }
+        .record-info { flex: 1; }
+        .record-title { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+        .record-time { font-size: 10px; color: var(--text-muted); }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 1100px) {
+            .content-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 800px) {
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== 主应用 ===== -->
+<div class="app-layout">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">📚</div>
+            <div class="logo-text">英语学习站</div>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">导航</div>
+            <div class="nav-item active" onclick="switchPage('home')">
+                <span class="nav-icon">🏠</span><span>首页</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('words')">
+                <span class="nav-icon">🔤</span><span>单词学习</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('grammar')">
+                <span class="nav-icon">📐</span><span>语法体系</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('quiz')">
+                <span class="nav-icon">🎯</span><span>模拟测验</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <!-- 顶部栏 -->
+        <header class="top-header">
+            <div class="header-nav">
+                <div class="header-nav-item active">首页</div>
+                <div class="header-nav-item">基础学习</div>
+                <div class="header-nav-item">真题解析</div>
+                <div class="header-nav-item">模拟测验</div>
+            </div>
+            <div class="header-actions">
+                <div class="theme-switcher">
+                    <button class="theme-btn active" onclick="switchTheme('dark')">🌙</button>
+                    <button class="theme-btn" onclick="switchTheme('light')">☀️</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-body">
+            <!-- ===== 首页仪表盘 ===== -->
+            <div class="page-section active" id="page-home">
+                <!-- 欢迎栏 -->
+                <div class="welcome-bar">
+                    <div class="welcome-text">
+                        <h2>👋 欢迎回来，学习者！</h2>
+                        <p>今天是学习的第 23 天，继续保持！</p>
+                    </div>
+                    <div class="check-in-card">
+                        <div class="check-in-info">
+                            <div class="check-in-days">7</div>
+                            <div class="check-in-label">连续学习天数</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-card-label">
+                            <span>单词</span>
+                            <div class="stat-card-icon">📚</div>
+                        </div>
+                        <div class="stat-card-value">32%</div>
+                        <div class="stat-card-sub">640/2000</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">
+                            <span>语法</span>
+                            <div class="stat-card-icon">📐</div>
+                        </div>
+                        <div class="stat-card-value">45%</div>
+                        <div class="stat-card-sub">9/20章节</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">
+                            <span>阅读</span>
+                            <div class="stat-card-icon">📖</div>
+                        </div>
+                        <div class="stat-card-value">28%</div>
+                        <div class="stat-card-sub">3/12篇</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">
+                            <span>测验</span>
+                            <div class="stat-card-icon">🎯</div>
+                        </div>
+                        <div class="stat-card-value">85分</div>
+                        <div class="stat-card-sub">平均分</div>
+                    </div>
+                </div>
+
+                <!-- 主内容区 -->
+                <div class="content-grid">
+                    <!-- 左侧：智能推荐 -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <h3>🎯 智能学习推荐</h3>
+                        </div>
+                        
+                        <!-- 推荐卡片1 -->
+                        <div class="recommend-card-enhanced priority-high">
+                            <div class="recommend-header">
+                                <div style="display: flex; align-items: flex-start;">
+                                    <div class="recommend-icon-wrap warning">⚠️</div>
+                                    <div class="recommend-info">
+                                        <div class="recommend-title">单词掌握率较低</div>
+                                        <div class="recommend-desc">建议复习「高频词」中 30 个未掌握单词</div>
+                                    </div>
+                                </div>
+                                <span class="recommend-priority high">高优先</span>
+                            </div>
+                            <div class="recommend-progress">
+                                <div class="recommend-progress-bar">
+                                    <div class="recommend-progress-fill" style="width: 32%; background: var(--error);"></div>
+                                </div>
+                                <div class="recommend-progress-text">
+                                    <span>当前: 32%</span>
+                                    <span>目标: 50%</span>
+                                </div>
+                            </div>
+                            <div class="recommend-actions">
+                                <button class="btn btn-primary btn-sm">开始学习</button>
+                                <button class="btn btn-ghost btn-sm">查看详情</button>
+                            </div>
+                        </div>
+
+                        <!-- 推荐卡片2 -->
+                        <div class="recommend-card-enhanced priority-medium">
+                            <div class="recommend-header">
+                                <div style="display: flex; align-items: flex-start;">
+                                    <div class="recommend-icon-wrap info">💡</div>
+                                    <div class="recommend-info">
+                                        <div class="recommend-title">语法「非谓语动词」到期复习</div>
+                                        <div class="recommend-desc">艾宾浩斯提醒：今天需要复习</div>
+                                    </div>
+                                </div>
+                                <span class="recommend-priority medium">中优先</span>
+                            </div>
+                            <div class="recommend-actions">
+                                <button class="btn btn-primary btn-sm">立即复习</button>
+                            </div>
+                        </div>
+
+                        <!-- 推荐卡片3 -->
+                        <div class="recommend-card-enhanced priority-low">
+                            <div class="recommend-header">
+                                <div style="display: flex; align-items: flex-start;">
+                                    <div class="recommend-icon-wrap success">📊</div>
+                                    <div class="recommend-info">
+                                        <div class="recommend-title">错题本提醒</div>
+                                        <div class="recommend-desc">阅读理解错误率最高 (45%)</div>
+                                    </div>
+                                </div>
+                                <span class="recommend-priority low">建议</span>
+                            </div>
+                            <div class="recommend-actions">
+                                <button class="btn btn-primary btn-sm">专项练习</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧：艾宾浩斯 -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <h3>📋 艾宾浩斯今日待复习</h3>
+                            <span class="panel-more">查看全部 →</span>
+                        </div>
+                        <div class="ebbinghaus-cards">
+                            <div class="ebbinghaus-card">
+                                <div class="ebbinghaus-card-title">abandon</div>
+                                <div class="ebbinghaus-card-stage">阶段 3 · 单词</div>
+                                <button class="btn btn-primary btn-sm ebbinghaus-card-btn">复习</button>
+                            </div>
+                            <div class="ebbinghaus-card">
+                                <div class="ebbinghaus-card-title">定语从句</div>
+                                <div class="ebbinghaus-card-stage">阶段 2 · 知识点</div>
+                                <button class="btn btn-primary btn-sm ebbinghaus-card-btn">复习</button>
+                            </div>
+                            <div class="ebbinghaus-card">
+                                <div class="ebbinghaus-card-title">ability</div>
+                                <div class="ebbinghaus-card-stage">阶段 1 · 单词</div>
+                                <button class="btn btn-primary btn-sm ebbinghaus-card-btn">复习</button>
+                            </div>
+                            <div class="ebbinghaus-card">
+                                <div class="ebbinghaus-card-title">虚拟语气</div>
+                                <div class="ebbinghaus-card-stage">阶段 4 · 知识点</div>
+                                <button class="btn btn-primary btn-sm ebbinghaus-card-btn">复习</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 最近学习记录 -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>📝 最近学习记录</h3>
+                    </div>
+                    <div class="record-list">
+                        <div class="record-item">
+                            <div class="record-icon">📚</div>
+                            <div class="record-info">
+                                <div class="record-title">单词 "abandon" 标记为已掌握</div>
+                            </div>
+                            <div class="record-time">2分钟前</div>
+                        </div>
+                        <div class="record-item">
+                            <div class="record-icon">📐</div>
+                            <div class="record-info">
+                                <div class="record-title">语法 "定语从句" 学习完成</div>
+                            </div>
+                            <div class="record-time">15分钟前</div>
+                        </div>
+                        <div class="record-item">
+                            <div class="record-icon">🎯</div>
+                            <div class="record-info">
+                                <div class="record-title">快速测验 得分 8/10</div>
+                            </div>
+                            <div class="record-time">1小时前</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 单词学习页面 ===== -->
+            <div class="page-section" id="page-words">
+                <h2 style="margin-bottom: 20px;">单词学习</h2>
+                
+                <!-- 单词卡片示例 -->
+                <div class="word-card-enhanced" id="word-card-demo">
+                    <!-- 基础信息 -->
+                    <div class="word-basic">
+                        <div class="word-header">
+                            <div class="word-title">abandon</div>
+                            <div class="word-phonetic">/əˈbændən/</div>
+                        </div>
+                        <div class="word-meaning">v. 放弃，抛弃</div>
+                    </div>
+                    
+                    <!-- 三状态按钮 -->
+                    <div class="status-tri-btns" id="status-btns">
+                        <button class="status-tri-btn unmastered" data-status="unmastered" onclick="setStatus(this, 'unmastered')">
+                            <span class="status-icon"></span>未掌握
+                        </button>
+                        <button class="status-tri-btn learning" data-status="learning" onclick="setStatus(this, 'learning')">
+                            <span class="status-icon"></span>学习中
+                        </button>
+                        <button class="status-tri-btn mastered active" data-status="mastered" onclick="setStatus(this, 'mastered')">
+                            <span class="status-icon"></span>熟悉
+                        </button>
+                    </div>
+                    
+                    <!-- 知识点标签 -->
+                    <div class="knowledge-tags" id="knowledge-tags">
+                        <button class="knowledge-tag example" onclick="toggleTag(this, 'example')">
+                            <span>📖</span> 例句 <span class="tag-count">2</span>
+                        </button>
+                        <button class="knowledge-tag tip" onclick="toggleTag(this, 'tip')">
+                            <span>💡</span> 技巧 <span class="tag-count">1</span>
+                        </button>
+                        <button class="knowledge-tag collocation" onclick="toggleTag(this, 'collocation')">
+                            <span>🔗</span> 搭配 <span class="tag-count">3</span>
+                        </button>
+                        <button class="knowledge-tag root" onclick="toggleTag(this, 'root')">
+                            <span>🌳</span> 词根
+                        </button>
+                        <button class="knowledge-tag error" onclick="toggleTag(this, 'error')">
+                            <span>⚠️</span> 易错 <span class="tag-count">1</span>
+                        </button>
+                    </div>
+                    
+                    <!-- 标签内容展开区 -->
+                    <div class="tag-content-panel" id="tag-content-panel"></div>
+                    
+                    <!-- 关联推荐 -->
+                    <div class="related-section">
+                        <div class="related-title">
+                            <span>📌</span>
+                            <span>相关推荐</span>
+                        </div>
+                        <div class="related-cards">
+                            <div class="related-card">
+                                <div class="related-card-word">abandoned</div>
+                                <div class="related-card-meaning">adj. 废弃的</div>
+                                <div class="related-card-status mastered">已掌握</div>
+                            </div>
+                            <div class="related-card">
+                                <div class="related-card-word">abandonment</div>
+                                <div class="related-card-meaning">n. 放弃</div>
+                                <div class="related-card-status unmastered">未掌握</div>
+                            </div>
+                            <div class="related-card">
+                                <div class="related-card-word">give up</div>
+                                <div class="related-card-meaning">同义词</div>
+                                <div class="related-card-status suggest">+ 推荐</div>
+                            </div>
+                            <div class="related-card">
+                                <div class="related-card-word">quit</div>
+                                <div class="related-card-meaning">同义词</div>
+                                <div class="related-card-status suggest">+ 推荐</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 更多单词卡片 -->
+                <div class="word-card-enhanced">
+                    <div class="word-basic">
+                        <div class="word-header">
+                            <div class="word-title">ability</div>
+                            <div class="word-phonetic">/əˈbɪləti/</div>
+                        </div>
+                        <div class="word-meaning">n. 能力，才能</div>
+                    </div>
+                    <div class="status-tri-btns">
+                        <button class="status-tri-btn unmastered" data-status="unmastered" onclick="setStatus(this, 'unmastered')">
+                            <span class="status-icon"></span>未掌握
+                        </button>
+                        <button class="status-tri-btn learning active" data-status="learning" onclick="setStatus(this, 'learning')">
+                            <span class="status-icon"></span>学习中
+                        </button>
+                        <button class="status-tri-btn mastered" data-status="mastered" onclick="setStatus(this, 'mastered')">
+                            <span class="status-icon"></span>熟悉
+                        </button>
+                    </div>
+                    <div class="knowledge-tags">
+                        <button class="knowledge-tag example" onclick="toggleTag(this, 'example')">
+                            <span>📖</span> 例句 <span class="tag-count">1</span>
+                        </button>
+                        <button class="knowledge-tag collocation" onclick="toggleTag(this, 'collocation')">
+                            <span>🔗</span> 搭配 <span class="tag-count">2</span>
+                        </button>
+                        <button class="knowledge-tag root" onclick="toggleTag(this, 'root')">
+                            <span>🌳</span> 词根
+                        </button>
+                    </div>
+                    <div class="related-section">
+                        <div class="related-title">
+                            <span>📌</span>
+                            <span>相关推荐</span>
+                        </div>
+                        <div class="related-cards">
+                            <div class="related-card">
+                                <div class="related-card-word">capable</div>
+                                <div class="related-card-meaning">adj. 有能力的</div>
+                                <div class="related-card-status suggest">+ 推荐</div>
+                            </div>
+                            <div class="related-card">
+                                <div class="related-card-word">enable</div>
+                                <div class="related-card-meaning">v. 使能够</div>
+                                <div class="related-card-status unmastered">未掌握</div>
+                            </div>
+                            <div class="related-card">
+                                <div class="related-card-word">unable</div>
+                                <div class="related-card-meaning">adj. 不能的</div>
+                                <div class="related-card-status learning">学习中</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="word-card-enhanced">
+                    <div class="word-basic">
+                        <div class="word-header">
+                            <div class="word-title">absolute</div>
+                            <div class="word-phonetic">/ˈæbsəluːt/</div>
+                        </div>
+                        <div class="word-meaning">adj. 绝对的，完全的</div>
+                    </div>
+                    <div class="status-tri-btns">
+                        <button class="status-tri-btn unmastered active" data-status="unmastered" onclick="setStatus(this, 'unmastered')">
+                            <span class="status-icon"></span>未掌握
+                        </button>
+                        <button class="status-tri-btn learning" data-status="learning" onclick="setStatus(this, 'learning')">
+                            <span class="status-icon"></span>学习中
+                        </button>
+                        <button class="status-tri-btn mastered" data-status="mastered" onclick="setStatus(this, 'mastered')">
+                            <span class="status-icon"></span>熟悉
+                        </button>
+                    </div>
+                    <div class="knowledge-tags">
+                        <button class="knowledge-tag example" onclick="toggleTag(this, 'example')">
+                            <span>📖</span> 例句 <span class="tag-count">1</span>
+                        </button>
+                        <button class="knowledge-tag root" onclick="toggleTag(this, 'root')">
+                            <span>🌳</span> 词根
+                        </button>
+                    </div>
+                    <div class="related-section">
+                        <div class="related-title">
+                            <span>📌</span>
+                            <span>相关推荐</span>
+                        </div>
+                        <div class="related-cards">
+                            <div class="related-card">
+                                <div class="related-card-word">absolutely</div>
+                                <div class="related-card-meaning">adv. 绝对地</div>
+                                <div class="related-card-status suggest">+ 推荐</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+// ===== 主题切换 =====
+function switchTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.includes(theme === 'dark' ? '🌙' : '☀️'));
+    });
+}
+
+// ===== 页面切换 =====
+function switchPage(page) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+}
+
+// ===== 三状态按钮 =====
+function setStatus(btn, status) {
+    const container = btn.parentElement;
+    container.querySelectorAll('.status-tri-btn').forEach(b => {
+        b.classList.remove('active');
+    });
+    btn.classList.add('active');
+    console.log('状态已切换为:', status);
+}
+
+// ===== 知识点标签展开 =====
+const tagContents = {
+    example: `
+        <div class="tag-content-header">
+            <div class="tag-content-title"><span>📖</span> 例句</div>
+        </div>
+        <div class="tag-content-body">
+            <div class="tag-content-item">
+                <div class="tag-content-item-en">She decided to abandon her career and travel the world.</div>
+                <div class="tag-content-item-cn">她决定放弃事业，去周游世界。</div>
+            </div>
+            <div class="tag-content-item">
+                <div class="tag-content-item-en">The sailors had to abandon the sinking ship.</div>
+                <div class="tag-content-item-cn">水手们不得不弃船。</div>
+            </div>
+        </div>
+    `,
+    tip: `
+        <div class="tag-content-header">
+            <div class="tag-content-title"><span>💡</span> 记忆技巧</div>
+        </div>
+        <div class="tag-content-body">
+            <div class="tag-content-item">
+                <strong>联想记忆：</strong>a- (加强) + bandon (权力) → 放弃管辖权 → 放弃<br><br>
+                想象一个国王放弃了他的权力（bandon），离开了自己的国家。
+            </div>
+        </div>
+    `,
+    collocation: `
+        <div class="tag-content-header">
+            <div class="tag-content-title"><span>🔗</span> 常见搭配</div>
+        </div>
+        <div class="tag-content-body">
+            <div class="tag-content-item">
+                <div class="tag-content-item-en">abandon oneself to despair</div>
+                <div class="tag-content-item-cn">陷入绝望</div>
+            </div>
+            <div class="tag-content-item">
+                <div class="tag-content-item-en">abandon a plan</div>
+                <div class="tag-content-item-cn">放弃计划</div>
+            </div>
+            <div class="tag-content-item">
+                <div class="tag-content-item-en">abandon hope</div>
+                <div class="tag-content-item-cn">放弃希望</div>
+            </div>
+        </div>
+    `,
+    root: `
+        <div class="tag-content-header">
+            <div class="tag-content-title"><span>🌳</span> 词根词缀</div>
+        </div>
+        <div class="tag-content-body">
+            <div class="tag-content-item">
+                <strong>词根：</strong>a- (加强语气) + bandon (权力、管辖)<br><br>
+                <strong>来源：</strong>拉丁语 <em>bannum</em>（宣告、禁令）<br><br>
+                <strong>同源词：</strong>ban（禁令）、bandit（强盗）、contraband（违禁品）
+            </div>
+        </div>
+    `,
+    error: `
+        <div class="tag-content-header">
+            <div class="tag-content-title"><span>⚠️</span> 易错点</div>
+        </div>
+        <div class="tag-content-body">
+            <div class="tag-content-item" style="border-left: 3px solid var(--error);">
+                <strong>注意：</strong>abandon 后接动名词或不定式都可以，但含义略有不同：<br><br>
+                • abandon doing sth. 放弃正在做的事<br>
+                • abandon to do sth. 放弃去做某事
+            </div>
+        </div>
+    `
+};
+
+function toggleTag(btn, type) {
+    const container = btn.parentElement;
+    const panel = document.getElementById('tag-content-panel');
+    
+    // 切换激活状态
+    if (btn.classList.contains('active')) {
+        btn.classList.remove('active');
+        panel.classList.remove('active');
+        panel.innerHTML = '';
+    } else {
+        container.querySelectorAll('.knowledge-tag').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        panel.innerHTML = tagContents[type] || '';
+        panel.classList.add('active');
+    }
+}
+</script>
+</body>
+</html>
