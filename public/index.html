@@ -1219,14 +1219,14 @@
 <!-- ===== 主应用 ===== -->
 <div class="app-layout" id="appLayout">
     <!-- 左侧边栏 - 动态显示当前模块的子导航 -->
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar" style="display:none;">
         <div class="sidebar-header">
             <div class="logo-icon">📚</div>
             <div class="logo-text">英语</div>
         </div>
 
         <!-- 基础学习模块的子导航 -->
-        <div id="sidebar-basic" class="nav-section">
+        <div id="sidebar-basic" class="nav-section" style="display:none;">
             <div class="nav-section-title">基础学习</div>
             <div class="nav-item active" onclick="switchStudyTab('words')">
                 <span class="nav-icon">🔤</span><span>单词掌握清单</span>
@@ -1300,7 +1300,7 @@
     </aside>
 
     <!-- 主内容 -->
-    <main class="main-content">
+    <main class="main-content" style="margin-left:0;">
         <!-- 顶部栏 -->
         <header class="top-header">
             <div class="header-nav">
